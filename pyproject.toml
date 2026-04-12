@@ -7,7 +7,7 @@ name = "lifexp"
 version = "0.1.0"
 description = "Actuarial life experience analysis toolkit for mortality, lapse, morbidity, reinsurance, expense, graduation, and reporting."
 readme = "README.md"
-license = { text = "MIT" }
+license = "MIT"
 requires-python = ">=3.9"
 authors = [
     { name = "W M Dhanushka S B Wijekoon", email = "dhanushkasisil@outlook.com" },
@@ -26,7 +26,6 @@ classifiers = [
     "Development Status :: 4 - Beta",
     "Intended Audience :: Financial and Insurance Industry",
     "Intended Audience :: Science/Research",
-    "License :: OSI Approved :: MIT License",
     "Programming Language :: Python :: 3",
     "Programming Language :: Python :: 3.9",
     "Programming Language :: Python :: 3.10",
