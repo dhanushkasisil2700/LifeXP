@@ -1,0 +1,2150 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>lifeXP — Claude Code Build Plan</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=IBM+Plex+Mono:wght@400;500;600&family=Source+Serif+4:ital,wght@0,300;0,400;1,300&display=swap" rel="stylesheet"/>
+<style>
+:root {
+  --bg: #0c0e14;
+  --surface: #13151f;
+  --surface2: #1a1d2e;
+  --border: #252840;
+  --text: #e2e4f0;
+  --muted: #5a5e7a;
+  --accent-y: #f0c040;
+  --accent-b: #4a9eff;
+  --accent-g: #3ecf8e;
+  --accent-r: #ff6b6b;
+  --accent-p: #b57aff;
+  --accent-o: #ff9f43;
+  --mono: 'IBM Plex Mono', monospace;
+  --display: 'Syne', sans-serif;
+  --serif: 'Source Serif 4', serif;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+html{scroll-behavior:smooth;}
+body{background:var(--bg);color:var(--text);font-family:var(--serif);font-weight:300;line-height:1.7;font-size:15px;}
+
+/* ── HEADER ── */
+header{
+  padding:64px 64px 56px;
+  background: linear-gradient(135deg, #0c0e14 0%, #13151f 40%, #0f1020 100%);
+  border-bottom:1px solid var(--border);
+  position:relative;
+  overflow:hidden;
+}
+header::before{
+  content:'';position:absolute;top:-100px;right:-100px;
+  width:500px;height:500px;border-radius:50%;
+  background:radial-gradient(circle, rgba(74,158,255,0.06) 0%, transparent 70%);
+}
+header::after{
+  content:'';position:absolute;bottom:-80px;left:30%;
+  width:300px;height:300px;border-radius:50%;
+  background:radial-gradient(circle, rgba(240,192,64,0.04) 0%, transparent 70%);
+}
+.h-eyebrow{
+  font-family:var(--mono);font-size:10px;font-weight:600;
+  letter-spacing:0.2em;text-transform:uppercase;
+  color:var(--accent-y);margin-bottom:16px;
+}
+header h1{
+  font-family:var(--display);font-size:clamp(2rem,4.5vw,3.4rem);
+  font-weight:800;line-height:1.05;letter-spacing:-0.02em;
+  color:#fff;margin-bottom:12px;
+}
+header h1 span{color:var(--accent-b);}
+.h-sub{font-size:14px;color:var(--muted);max-width:580px;line-height:1.65;margin-bottom:32px;}
+.h-stats{display:flex;gap:40px;flex-wrap:wrap;}
+.stat{display:flex;flex-direction:column;gap:3px;}
+.stat-n{font-family:var(--display);font-size:1.8rem;font-weight:800;color:var(--accent-y);line-height:1;}
+.stat-l{font-family:var(--mono);font-size:10px;letter-spacing:0.12em;color:var(--muted);text-transform:uppercase;}
+
+/* ── HOW TO USE ── */
+.how-to-use{
+  background:var(--surface);border:1px solid var(--border);
+  border-left:3px solid var(--accent-y);
+  margin:40px 64px;padding:28px 32px;
+}
+.how-to-use h2{
+  font-family:var(--mono);font-size:11px;letter-spacing:0.15em;
+  text-transform:uppercase;color:var(--accent-y);margin-bottom:16px;
+}
+.how-to-use ol{padding-left:20px;display:flex;flex-direction:column;gap:8px;}
+.how-to-use li{font-size:13px;color:#b0b4cc;line-height:1.6;}
+.how-to-use li strong{color:var(--text);font-weight:600;}
+
+/* ── PHASE HEADER ── */
+.phase-block{
+  margin:0 64px;
+  border-top:1px solid var(--border);
+  padding:48px 0 0;
+}
+.phase-header{
+  display:flex;align-items:center;gap:20px;margin-bottom:32px;
+}
+.phase-pill{
+  font-family:var(--display);font-size:11px;font-weight:700;
+  letter-spacing:0.1em;text-transform:uppercase;
+  padding:5px 14px;border-radius:2px;white-space:nowrap;
+}
+.ph-1{background:rgba(240,192,64,0.12);color:var(--accent-y);border:1px solid rgba(240,192,64,0.25);}
+.ph-2{background:rgba(74,158,255,0.12);color:var(--accent-b);border:1px solid rgba(74,158,255,0.25);}
+.ph-3{background:rgba(62,207,142,0.12);color:var(--accent-g);border:1px solid rgba(62,207,142,0.25);}
+.ph-4{background:rgba(181,122,255,0.12);color:var(--accent-p);border:1px solid rgba(181,122,255,0.25);}
+.phase-title{
+  font-family:var(--display);font-size:1.5rem;font-weight:700;
+  color:#fff;letter-spacing:-0.01em;
+}
+.phase-meta{font-family:var(--mono);font-size:11px;color:var(--muted);margin-left:auto;}
+
+/* ── SPRINT CARD ── */
+.sprint{
+  background:var(--surface);border:1px solid var(--border);
+  margin-bottom:24px;overflow:hidden;
+}
+.sprint-header{
+  display:grid;grid-template-columns:auto 1fr auto;
+  align-items:center;gap:20px;
+  padding:18px 24px;
+  border-bottom:1px solid var(--border);
+  background:var(--surface2);
+}
+.sprint-num{
+  font-family:var(--mono);font-size:10px;font-weight:600;
+  letter-spacing:0.15em;color:var(--muted);text-transform:uppercase;
+  min-width:60px;
+}
+.sprint-title{
+  font-family:var(--display);font-size:1rem;font-weight:700;color:#fff;
+}
+.sprint-tag{
+  font-family:var(--mono);font-size:9px;font-weight:600;
+  letter-spacing:0.12em;text-transform:uppercase;
+  padding:3px 9px;border-radius:2px;white-space:nowrap;
+}
+.tag-core{background:rgba(240,192,64,0.12);color:var(--accent-y);}
+.tag-study{background:rgba(74,158,255,0.12);color:var(--accent-b);}
+.tag-grad{background:rgba(62,207,142,0.12);color:var(--accent-g);}
+.tag-report{background:rgba(181,122,255,0.12);color:var(--accent-p);}
+.tag-int{background:rgba(255,107,107,0.12);color:var(--accent-r);}
+
+.sprint-body{padding:24px;}
+.sprint-grid{display:grid;grid-template-columns:1fr 1fr;gap:20px;}
+
+/* ── SECTION INSIDE SPRINT ── */
+.s-section{display:flex;flex-direction:column;gap:10px;}
+.s-label{
+  font-family:var(--mono);font-size:9px;font-weight:600;
+  letter-spacing:0.18em;text-transform:uppercase;
+  color:var(--muted);border-bottom:1px solid var(--border);
+  padding-bottom:6px;margin-bottom:4px;
+}
+
+/* PROMPT BOX */
+.prompt-box{
+  background:#080a10;border:1px solid var(--border);
+  border-left:2px solid var(--accent-b);
+  padding:14px 16px;font-family:var(--mono);
+  font-size:12px;line-height:1.65;color:#a8b4d0;
+  white-space:pre-wrap;word-break:break-word;
+}
+.prompt-box .kw{color:var(--accent-y);}
+.prompt-box .str{color:var(--accent-g);}
+.prompt-box .cmt{color:var(--muted);}
+
+/* GOAL LIST */
+.goal-list{list-style:none;display:flex;flex-direction:column;gap:6px;}
+.goal-list li{
+  font-size:13px;color:#b0b4cc;
+  padding:6px 10px 6px 14px;
+  position:relative;
+  border-left:1px solid var(--border);
+  line-height:1.5;
+}
+.goal-list li::before{
+  content:'';position:absolute;left:-3px;top:50%;transform:translateY(-50%);
+  width:5px;height:5px;border-radius:50%;
+  background:var(--accent-g);
+}
+
+/* TEST CASES */
+.test-block{display:flex;flex-direction:column;gap:8px;}
+.test-case{
+  border:1px solid var(--border);padding:10px 14px;
+  background:#0a0c14;
+}
+.test-case-header{
+  display:flex;align-items:center;gap:10px;margin-bottom:6px;
+}
+.test-badge{
+  font-family:var(--mono);font-size:9px;font-weight:600;
+  letter-spacing:0.1em;text-transform:uppercase;
+  padding:2px 7px;border-radius:1px;
+}
+.tb-normal{background:rgba(62,207,142,0.15);color:var(--accent-g);}
+.tb-edge{background:rgba(255,107,107,0.15);color:var(--accent-r);}
+.tb-boundary{background:rgba(255,159,67,0.15);color:var(--accent-o);}
+.test-name{font-family:var(--mono);font-size:11px;color:var(--text);}
+.test-desc{font-size:12px;color:var(--muted);line-height:1.5;}
+.test-expect{
+  font-family:var(--mono);font-size:11px;
+  color:var(--accent-g);margin-top:4px;
+}
+
+/* CHECKPOINT */
+.checkpoint{
+  background:rgba(240,192,64,0.05);
+  border:1px solid rgba(240,192,64,0.2);
+  padding:16px 20px;margin-top:20px;
+  display:flex;align-items:flex-start;gap:16px;
+}
+.checkpoint-icon{
+  font-family:var(--mono);font-size:18px;color:var(--accent-y);
+  line-height:1;flex-shrink:0;margin-top:2px;
+}
+.checkpoint-text{font-size:13px;color:#b0b4cc;line-height:1.6;}
+.checkpoint-text strong{color:var(--accent-y);font-weight:600;}
+
+/* FULL WIDTH SPRINT */
+.sprint-grid.full{grid-template-columns:1fr;}
+
+/* INTEGRATION BANNER */
+.integration-banner{
+  background:linear-gradient(90deg,rgba(255,107,107,0.08),rgba(181,122,255,0.08));
+  border:1px solid rgba(255,107,107,0.2);
+  padding:20px 24px;margin-bottom:24px;
+}
+.integration-banner h3{
+  font-family:var(--display);font-size:0.95rem;font-weight:700;
+  color:var(--accent-r);margin-bottom:8px;
+}
+.integration-banner p{font-size:13px;color:var(--muted);line-height:1.6;}
+
+/* OVERVIEW GRID */
+.overview-grid{
+  display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));
+  gap:1px;background:var(--border);
+  border:1px solid var(--border);margin:0 64px 48px;
+}
+.og-cell{
+  background:var(--surface);padding:18px 20px;
+}
+.og-phase{
+  font-family:var(--mono);font-size:9px;letter-spacing:0.15em;
+  text-transform:uppercase;color:var(--muted);margin-bottom:6px;
+}
+.og-name{
+  font-family:var(--display);font-size:13px;font-weight:700;color:#fff;
+  margin-bottom:4px;
+}
+.og-count{font-size:12px;color:var(--muted);}
+
+/* FOOTER */
+footer{
+  margin-top:64px;
+  background:var(--surface);border-top:1px solid var(--border);
+  padding:24px 64px;
+  display:flex;justify-content:space-between;align-items:center;
+  font-family:var(--mono);font-size:10px;color:var(--muted);
+}
+
+@media(max-width:768px){
+  header,.phase-block,.how-to-use,.overview-grid,footer{padding-left:20px;padding-right:20px;margin-left:0;margin-right:0;}
+  .sprint-grid{grid-template-columns:1fr;}
+  .h-stats{gap:24px;}
+}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="h-eyebrow">lifeXP · Claude Code Build Plan · Incremental TDD Approach</div>
+  <h1><span>lifeXP</span> — Incremental<br>Build & Test Plan</h1>
+  <p class="h-sub">A prompt-by-prompt construction guide for Claude Code. Each sprint is a self-contained unit: one focused prompt, a clear goal, normal cases, edge cases, and a pass/fail checkpoint before moving on.</p>
+  <div class="h-stats">
+    <div class="stat"><span class="stat-n">4</span><span class="stat-l">Phases</span></div>
+    <div class="stat"><span class="stat-n">22</span><span class="stat-l">Sprints</span></div>
+    <div class="stat"><span class="stat-n">90+</span><span class="stat-l">Test Cases</span></div>
+    <div class="stat"><span class="stat-n">8</span><span class="stat-l">Modules</span></div>
+  </div>
+</header>
+
+<div class="how-to-use">
+  <h2>How to use this plan with Claude Code</h2>
+  <ol>
+    <li><strong>One sprint at a time.</strong> Copy the exact prompt text into Claude Code. Do not combine sprints — each builds on the last.</li>
+    <li><strong>Run all test cases before proceeding.</strong> Every sprint has Normal, Edge, and Boundary tests. All must pass before you move to the next sprint.</li>
+    <li><strong>Read the Checkpoint.</strong> The checkpoint is your go/no-go gate. If anything fails, ask Claude Code to fix it within the same sprint — do not advance.</li>
+    <li><strong>Keep a <code>tests/</code> folder.</strong> Ask Claude Code to write <code>pytest</code> tests for each sprint. They accumulate. Run the full suite at every Phase boundary.</li>
+    <li><strong>At phase boundaries, run the full suite.</strong> Before starting Phase 2, all Phase 1 tests must be green. Same for every subsequent phase.</li>
+  </ol>
+</div>
+
+<!-- OVERVIEW -->
+<div class="overview-grid">
+  <div class="og-cell"><div class="og-phase">Phase 1</div><div class="og-name">S01 — Project Scaffold</div><div class="og-count">Setup + structure</div></div>
+  <div class="og-cell"><div class="og-phase">Phase 1</div><div class="og-name">S02 — PolicyRecord</div><div class="og-count">Data model + validation</div></div>
+  <div class="og-cell"><div class="og-phase">Phase 1</div><div class="og-name">S03 — Study Period</div><div class="og-count">Date logic + age basis</div></div>
+  <div class="og-cell"><div class="og-phase">Phase 1</div><div class="og-name">S04 — Central ETR</div><div class="og-count">Exposure engine pt.1</div></div>
+  <div class="og-cell"><div class="og-phase">Phase 1</div><div class="og-name">S05 — Initial ETR</div><div class="og-count">Exposure engine pt.2</div></div>
+  <div class="og-cell"><div class="og-phase">Phase 1</div><div class="og-name">S06 — Table Registry</div><div class="og-count">Standard table loader</div></div>
+  <div class="og-cell"><div class="og-phase">Phase 1</div><div class="og-name">S07 — Segmentation</div><div class="og-count">Groupby + credibility</div></div>
+  <div class="og-cell"><div class="og-phase">Phase 2</div><div class="og-name">S08 — Graduation 1D</div><div class="og-count">Whittaker + Gompertz</div></div>
+  <div class="og-cell"><div class="og-phase">Phase 2</div><div class="og-name">S09 — Graduation 2D</div><div class="og-count">2D WH + P-splines</div></div>
+  <div class="og-cell"><div class="og-phase">Phase 2</div><div class="og-name">S10 — Mortality Study</div><div class="og-count">Rates + A/E analysis</div></div>
+  <div class="og-cell"><div class="og-phase">Phase 2</div><div class="og-name">S11 — Mortality Proj.</div><div class="og-count">Lee-Carter + CBD</div></div>
+  <div class="og-cell"><div class="og-phase">Phase 2</div><div class="og-name">S12 — Lapse Study</div><div class="og-count">Rates + persistency</div></div>
+  <div class="og-cell"><div class="og-phase">Phase 3</div><div class="og-name">S13 — Dual ETR</div><div class="og-count">Morbidity exposure</div></div>
+  <div class="og-cell"><div class="og-phase">Phase 3</div><div class="og-name">S14 — Morbidity Study</div><div class="og-count">Incidence + termination</div></div>
+  <div class="og-cell"><div class="og-phase">Phase 3</div><div class="og-name">S15 — Multi-State</div><div class="og-count">HSD model</div></div>
+  <div class="og-cell"><div class="og-phase">Phase 3</div><div class="og-name">S16 — RI Module</div><div class="og-count">Benchmarking + A/E</div></div>
+  <div class="og-cell"><div class="og-phase">Phase 3</div><div class="og-name">S17 — Expense Study</div><div class="og-count">Unit cost + commission</div></div>
+  <div class="og-cell"><div class="og-phase">Phase 4</div><div class="og-name">S18 — Reporting Core</div><div class="og-count">HTML + Excel output</div></div>
+  <div class="og-cell"><div class="og-phase">Phase 4</div><div class="og-name">S19 — Visualisation</div><div class="og-count">Charts + heatmaps</div></div>
+  <div class="og-cell"><div class="og-phase">Phase 4</div><div class="og-name">S20 — Audit Trail</div><div class="og-count">Run metadata + diff</div></div>
+  <div class="og-cell"><div class="og-phase">Phase 4</div><div class="og-name">S21 — CLI + API</div><div class="og-count">Public interface</div></div>
+  <div class="og-cell"><div class="og-phase">Phase 4</div><div class="og-name">S22 — Full E2E Test</div><div class="og-count">End-to-end integration</div></div>
+</div>
+
+
+<!-- ═══════════════════════════════════════════════════════════════ -->
+<!-- PHASE 1 -->
+<!-- ═══════════════════════════════════════════════════════════════ -->
+<div class="phase-block">
+  <div class="phase-header">
+    <span class="phase-pill ph-1">Phase 1</span>
+    <span class="phase-title">Core Infrastructure — The Foundation</span>
+    <span class="phase-meta">Sprints S01 – S07</span>
+  </div>
+
+  <!-- S01 -->
+  <div class="sprint">
+    <div class="sprint-header">
+      <span class="sprint-num">S01</span>
+      <span class="sprint-title">Project Scaffold & Package Structure</span>
+      <span class="sprint-tag tag-core">SETUP</span>
+    </div>
+    <div class="sprint-body">
+      <div class="sprint-grid">
+        <div class="s-section">
+          <div class="s-label">Claude Code Prompt</div>
+          <div class="prompt-box"><span class="kw">Create a Python package</span> called <span class="str">`lifexp`</span> with the following structure:
+
+lifexp/
+  __init__.py
+  core/
+    __init__.py
+  mortality/
+    __init__.py
+  lapse/
+    __init__.py
+  morbidity/
+    __init__.py
+  reinsurance/
+    __init__.py
+  expense/
+    __init__.py
+  graduation/
+    __init__.py
+  reporting/
+    __init__.py
+  datasets/
+    __init__.py
+tests/
+  __init__.py
+setup.py  (or pyproject.toml)
+README.md
+
+<span class="cmt"># Requirements:
+# - pyproject.toml with dependencies: pandas, numpy, scipy, matplotlib
+# - pytest as dev dependency
+# - lifexp/__init__.py should expose version = "0.1.0"
+# - Each subpackage __init__.py should have a docstring
+# - README.md with one-line description</span></div>
+        </div>
+        <div class="s-section">
+          <div class="s-label">Goals</div>
+          <ul class="goal-list">
+            <li>Package imports without error: <code>import lifexp</code></li>
+            <li><code>lifexp.__version__</code> returns <code>"0.1.0"</code></li>
+            <li>All subpackage imports work</li>
+            <li><code>pytest tests/</code> collects 0 tests and exits green</li>
+            <li>pyproject.toml installs with <code>pip install -e .</code></li>
+          </ul>
+          <div class="s-label" style="margin-top:16px;">Test Cases</div>
+          <div class="test-block">
+            <div class="test-case">
+              <div class="test-case-header"><span class="test-badge tb-normal">Normal</span><span class="test-name">Package import</span></div>
+              <div class="test-desc">Run <code>python -c "import lifexp; print(lifexp.__version__)"</code></div>
+              <div class="test-expect">→ Prints "0.1.0" without error</div>
+            </div>
+            <div class="test-case">
+              <div class="test-case-header"><span class="test-badge tb-normal">Normal</span><span class="test-name">Subpackage imports</span></div>
+              <div class="test-desc">Import all 8 subpackages in sequence</div>
+              <div class="test-expect">→ No ImportError on any module</div>
+            </div>
+            <div class="test-case">
+              <div class="test-case-header"><span class="test-badge tb-edge">Edge</span><span class="test-name">Circular import check</span></div>
+              <div class="test-desc">Import lifexp.mortality then lifexp.core in same session</div>
+              <div class="test-expect">→ No circular import error</div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="checkpoint">
+        <span class="checkpoint-icon">✦</span>
+        <span class="checkpoint-text"><strong>Checkpoint S01:</strong> Run <code>pip install -e .</code> and <code>pytest tests/</code>. Both must succeed with zero errors before proceeding to S02.</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- S02 -->
+  <div class="sprint">
+    <div class="sprint-header">
+      <span class="sprint-num">S02</span>
+      <span class="sprint-title">PolicyRecord — Core Data Model</span>
+      <span class="sprint-tag tag-core">CORE</span>
+    </div>
+    <div class="sprint-body">
+      <div class="sprint-grid">
+        <div class="s-section">
+          <div class="s-label">Claude Code Prompt</div>
+          <div class="prompt-box"><span class="kw">In lifexp/core/data_model.py</span>, create a <span class="str">`PolicyRecord`</span> dataclass and a <span class="str">`PolicyDataset`</span> class.
+
+<span class="kw">PolicyRecord fields</span> (all typed):
+  policy_id: str
+  date_of_birth: date
+  issue_date: date
+  gender: Literal['M','F','U']
+  smoker_status: Literal['S','NS','U']
+  sum_assured: float          <span class="cmt"># must be > 0</span>
+  annual_premium: float       <span class="cmt"># must be >= 0</span>
+  product_code: str
+  channel: str
+  status: Literal['IF','LAPSED','DEATH','SURRENDERED','MATURED','PU']
+  exit_date: Optional[date]   <span class="cmt"># None if status == 'IF'</span>
+  exit_reason: Optional[str]
+
+<span class="kw">Validation rules</span>:
+  - issue_date must be >= date_of_birth
+  - exit_date must be > issue_date if not None
+  - If status != 'IF', exit_date must not be None
+  - sum_assured must be > 0
+  - annual_premium must be >= 0
+
+<span class="kw">PolicyDataset</span>:
+  - Wraps a list of PolicyRecord
+  - .from_dataframe(df, field_map: dict) classmethod
+    maps DataFrame columns to PolicyRecord fields
+  - .validate() returns list of validation errors (not raises)
+  - .to_dataframe() returns pd.DataFrame
+  - .summary() prints counts by status
+
+<span class="kw">Write tests</span> in tests/core/test_data_model.py covering all cases below.</div>
+        </div>
+        <div class="s-section">
+          <div class="s-label">Test Cases</div>
+          <div class="test-block">
+            <div class="test-case">
+              <div class="test-case-header"><span class="test-badge tb-normal">Normal</span><span class="test-name">Valid in-force record</span></div>
+              <div class="test-desc">Create PolicyRecord with status='IF', exit_date=None</div>
+              <div class="test-expect">→ No validation errors</div>
+            </div>
+            <div class="test-case">
+              <div class="test-case-header"><span class="test-badge tb-normal">Normal</span><span class="test-name">Valid death record</span></div>
+              <div class="test-desc">Status='DEATH', exit_date = valid date after issue</div>
+              <div class="test-expect">→ No validation errors</div>
+            </div>
+            <div class="test-case">
+              <div class="test-case-header"><span class="test-badge tb-normal">Normal</span><span class="test-name">DataFrame round-trip</span></div>
+              <div class="test-desc">from_dataframe() → to_dataframe() preserves all values</div>
+              <div class="test-expect">→ Output DataFrame equals input DataFrame</div>
+            </div>
+            <div class="test-case">
+              <div class="test-case-header"><span class="test-badge tb-edge">Edge</span><span class="test-name">Death without exit_date</span></div>
+              <div class="test-desc">Status='DEATH', exit_date=None</div>
+              <div class="test-expect">→ validate() returns error about missing exit_date</div>
+            </div>
+            <div class="test-case">
+              <div class="test-case-header"><span class="test-badge tb-edge">Edge</span><span class="test-name">Exit before issue</span></div>
+              <div class="test-desc">exit_date = issue_date - 1 day</div>
+              <div class="test-expect">→ validate() returns chronology error</div>
+            </div>
+            <div class="test-case">
+              <div class="test-case-header"><span class="test-badge tb-edge">Edge</span><span class="test-name">Zero sum assured</span></div>
+              <div class="test-desc">sum_assured = 0.0</div>
+              <div class="test-expect">→ validate() returns sum_assured error</div>
+            </div>
+            <div class="test-case">
+              <div class="test-case-header"><span class="test-badge tb-boundary">Boundary</span><span class="test-name">Issue date = DOB</span></div>
+              <div class="test-desc">issue_date == date_of_birth (newborn policy)</div>
+              <div class="test-expect">→ Passes validation (edge case but valid)</div>
+            </div>
+            <div class="test-case">
+              <div class="test-case-header"><span class="test-badge tb-edge">Edge</span><span class="test-name">Empty dataset</span></div>
+              <div class="test-desc">PolicyDataset with 0 records, call .summary()</div>
+              <div class="test-expect">→ Returns without error, shows zeros</div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="checkpoint">
+        <span class="checkpoint-icon">✦</span>
+        <span class="checkpoint-text"><strong>Checkpoint S02:</strong> All 8 test cases pass. <code>from_dataframe()</code> handles a 1000-row DataFrame with mixed statuses without error. Validation errors are collected (not raised) so a full dataset can be audited in one pass.</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- S03 -->
+  <div class="sprint">
+    <div class="sprint-header">
+      <span class="sprint-num">S03</span>
+      <span class="sprint-title">Study Period, Age Basis & Date Utilities</span>
+      <span class="sprint-tag tag-core">CORE</span>
+    </div>
+    <div class="sprint-body">
+      <div class="sprint-grid">
+        <div class="s-section">
+          <div class="s-label">Claude Code Prompt</div>
+          <div class="prompt-box"><span class="kw">In lifexp/core/study_period.py</span>, implement:
+
+<span class="str">StudyPeriod</span> dataclass:
+  start_date: date
+  end_date: date
+  - Validates end_date > start_date
+
+<span class="str">AgeBasis</span> enum:
+  NEAREST_BIRTHDAY = "nearest"
+  LAST_BIRTHDAY    = "last"
+  NEXT_BIRTHDAY    = "next"
+
+<span class="str">Functions</span> in lifexp/core/date_utils.py:
+  age_at(dob, ref_date, basis: AgeBasis) -> float
+    <span class="cmt"># Returns age as integer years under given basis</span>
+  
+  policy_year_at(issue_date, ref_date) -> int
+    <span class="cmt"># Returns policy year (1 = first year), 1-indexed</span>
+  
+  days_in_study(record, study: StudyPeriod) -> tuple[date, date]
+    <span class="cmt"># Returns (observation_start, observation_end) for a</span>
+    <span class="cmt"># PolicyRecord clipped to the study period</span>
+    <span class="cmt"># observation_start = max(issue_date, study.start_date)</span>
+    <span class="cmt"># observation_end   = min(exit_date or study.end_date, study.end_date)</span>
+
+<span class="kw">Write tests</span> in tests/core/test_date_utils.py.</div>
+        </div>
+        <div class="s-section">
+          <div class="s-label">Test Cases</div>
+          <div class="test-block">
+            <div class="test-case">
+              <div class="test-case-header"><span class="test-badge tb-normal">Normal</span><span class="test-name">Age nearest birthday</span></div>
+              <div class="test-desc">DOB=1980-07-15, ref=2023-07-14 → age nearest = 42; ref=2023-07-16 → 43</div>
+              <div class="test-expect">→ Correct boundary flip at halfway point</div>
+            </div>
+            <div class="test-case">
+              <div class="test-case-header"><span class="test-badge tb-normal">Normal</span><span class="test-name">Policy year calculation</span></div>
+              <div class="test-desc">Issue=2020-03-01, ref=2021-02-28 → PY=1; ref=2021-03-01 → PY=2</div>
+              <div class="test-expect">→ Boundary at exact anniversary</div>
+            </div>
+            <div class="test-case">
+              <div class="test-case-header"><span class="test-badge tb-normal">Normal</span><span class="test-name">In-force policy in study</span></div>
+              <div class="test-desc">Policy issued before study start, still active at study end</div>
+              <div class="test-expect">→ obs_start = study.start_date, obs_end = study.end_date</div>
+            </div>
+            <div class="test-case">
+              <div class="test-case-header"><span class="test-badge tb-edge">Edge</span><span class="test-name">Policy issued after study end</span></div>
+              <div class="test-desc">issue_date > study.end_date</div>
+              <div class="test-expect">→ Returns None or raises OutOfStudyError — policy not observed</div>
+            </div>
+            <div class="test-case">
+              <div class="test-case-header"><span class="test-badge tb-edge">Edge</span><span class="test-name">Policy exited before study start</span></div>
+              <div class="test-desc">exit_date < study.start_date</div>
+              <div class="test-expect">→ Returns None — policy not observed during study</div>
+            </div>
+            <div class="test-case">
+              <div class="test-case-header"><span class="test-badge tb-boundary">Boundary</span><span class="test-name">Feb 29 birthday in non-leap year</span></div>
+              <div class="test-desc">DOB=1980-02-29, ref=2023-02-28</div>
+              <div class="test-expect">→ Handles gracefully without crash (uses Feb 28 as anniversary)</div>
+            </div>
+            <div class="test-case">
+              <div class="test-case-header"><span class="test-badge tb-boundary">Boundary</span><span class="test-name">Policy exits on study end date</span></div>
+              <div class="test-desc">exit_date == study.end_date</div>
+              <div class="test-expect">→ obs_end = study.end_date (inclusive)</div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="checkpoint">
+        <span class="checkpoint-icon">✦</span>
+        <span class="checkpoint-text"><strong>Checkpoint S03:</strong> Feb-29 boundary case must be handled — this will affect exposure calculations for real portfolios. Policy year must be 1-indexed, not 0-indexed. All 7 tests pass.</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- S04 -->
+  <div class="sprint">
+    <div class="sprint-header">
+      <span class="sprint-num">S04</span>
+      <span class="sprint-title">Central Exposed-to-Risk Engine</span>
+      <span class="sprint-tag tag-core">CORE</span>
+    </div>
+    <div class="sprint-body">
+      <div class="sprint-grid">
+        <div class="s-section">
+          <div class="s-label">Claude Code Prompt</div>
+          <div class="prompt-box"><span class="kw">In lifexp/core/exposure.py</span>, implement central exposed-to-risk calculation.
+
+<span class="str">central_etr(dataset: PolicyDataset, study: StudyPeriod,
+            age_basis: AgeBasis, group_by: list[str]) -> pd.DataFrame</span>
+
+<span class="kw">Logic per policy</span>:
+  1. Clip observation window to study period using days_in_study()
+  2. For each age-year cell the policy passes through:
+     - ETR contribution = days in that age cell / 365.25
+  3. Policies that lapse, die, surrender during an age cell:
+     - They contribute fractional ETR up to exit date
+     - All exits are treated as censoring for central ETR
+       (deaths included in denominator the same as lapses)
+  4. group_by specifies which PolicyRecord fields to segment by
+     (e.g., ['gender', 'smoker_status', 'product_code'])
+
+<span class="kw">Output DataFrame columns</span>:
+  [group_by fields], age, policy_year, central_etr, policy_count
+
+<span class="kw">Also implement</span>:
+  etr_summary(etr_df) -> pd.DataFrame  <span class="cmt"># total ETR by age, ignoring other dims</span>
+
+<span class="kw">Write tests</span> in tests/core/test_exposure.py</div>
+        </div>
+        <div class="s-section">
+          <div class="s-label">Test Cases</div>
+          <div class="test-block">
+            <div class="test-case">
+              <div class="test-case-header"><span class="test-badge tb-normal">Normal</span><span class="test-name">Full year in-force</span></div>
+              <div class="test-desc">Policy in-force for the entire 1-year study, age 35 throughout</div>
+              <div class="test-expect">→ central_etr = 1.0 at age 35</div>
+            </div>
+            <div class="test-case">
+              <div class="test-case-header"><span class="test-badge tb-normal">Normal</span><span class="test-name">Policy crosses age boundary</span></div>
+              <div class="test-desc">Study Jan–Dec, policy turns 36 on July 1. Study is exactly 1 year.</div>
+              <div class="test-expect">→ ETR ≈ 0.496 at age 35, ≈ 0.504 at age 36 (sums to 1.0)</div>
+            </div>
+            <div class="test-case">
+              <div class="test-case-header"><span class="test-badge tb-normal">Normal</span><span class="test-name">Death mid-year</span></div>
+              <div class="test-desc">Policy dies on July 1 (halfway through year), age 40</div>
+              <div class="test-expect">→ central_etr ≈ 0.496 at age 40 (exposed up to death)</div>
+            </div>
+            <div class="test-case">
+              <div class="test-case-header"><span class="test-badge tb-normal">Normal</span><span class="test-name">Group-by segmentation</span></div>
+              <div class="test-desc">Dataset with M/F split, group_by=['gender']</div>
+              <div class="test-expect">→ Separate ETR rows for M and F, sums equal total</div>
+            </div>
+            <div class="test-case">
+              <div class="test-case-header"><span class="test-badge tb-edge">Edge</span><span class="test-name">Policy issued on study start</span></div>
+              <div class="test-desc">issue_date == study.start_date</div>
+              <div class="test-expect">→ Full year ETR counted, no double-counting</div>
+            </div>
+            <div class="test-case">
+              <div class="test-case-header"><span class="test-badge tb-edge">Edge</span><span class="test-name">Single-day observation</span></div>
+              <div class="test-desc">Policy issues and exits within same day</div>
+              <div class="test-expect">→ ETR = 1/365.25, no negative or zero contribution</div>
+            </div>
+            <div class="test-case">
+              <div class="test-case-header"><span class="test-badge tb-edge">Edge</span><span class="test-name">100-policy aggregate</span></div>
+              <div class="test-desc">100 identical policies, all in-force for full year</div>
+              <div class="test-expect">→ Total ETR = 100.0 exactly</div>
+            </div>
+            <div class="test-case">
+              <div class="test-case-header"><span class="test-badge tb-boundary">Boundary</span><span class="test-name">ETR sum invariant</span></div>
+              <div class="test-desc">For any set of policies, sum of all age-cell ETRs = sum of individual observation years</div>
+              <div class="test-expect">→ Conservation holds to within floating point tolerance</div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="checkpoint">
+        <span class="checkpoint-icon">✦</span>
+        <span class="checkpoint-text"><strong>Checkpoint S04:</strong> The ETR sum invariant test is the most critical. If ETR doesn't sum correctly, every downstream A/E ratio will be wrong. Verify manually with a hand-calculated 3-policy example before proceeding.</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- S05 -->
+  <div class="sprint">
+    <div class="sprint-header">
+      <span class="sprint-num">S05</span>
+      <span class="sprint-title">Initial Exposed-to-Risk Engine</span>
+      <span class="sprint-tag tag-core">CORE</span>
+    </div>
+    <div class="sprint-body">
+      <div class="sprint-grid">
+        <div class="s-section">
+          <div class="s-label">Claude Code Prompt</div>
+          <div class="prompt-box"><span class="kw">Extend lifexp/core/exposure.py</span> with initial ETR.
+
+<span class="str">initial_etr(dataset, study, age_basis, group_by) -> pd.DataFrame</span>
+
+<span class="kw">Key differences from central ETR</span>:
+  - Deaths contribute exactly 1.0 to the age cell they die in
+    (the "initial exposure" actuarial correction)
+  - Non-death exits (lapse, surrender) contribute fractional
+    year, same as central ETR
+  - Formula: initial_etr = central_etr + (1 - fractional_year) * deaths
+    applied per age cell
+
+<span class="kw">Also add</span>:
+  etr_comparison(central_df, initial_df) -> pd.DataFrame
+    <span class="cmt"># Side-by-side comparison of both ETR types by age</span>
+    <span class="cmt"># Shows: age, deaths, central_etr, initial_etr, difference</span>
+
+<span class="kw">Separation of deaths</span>:
+  The output must also include a 'deaths' column
+  (count of death exits in each age × group cell)
+
+<span class="kw">Update tests</span> in tests/core/test_exposure.py with initial ETR cases.</div>
+        </div>
+        <div class="s-section">
+          <div class="s-label">Test Cases</div>
+          <div class="test-block">
+            <div class="test-case">
+              <div class="test-case-header"><span class="test-badge tb-normal">Normal</span><span class="test-name">Death at exact mid-year</span></div>
+              <div class="test-desc">Policy dies July 1 (day 182 of 365). central_etr ≈ 0.499</div>
+              <div class="test-expect">→ initial_etr = 1.0 exactly for that age cell</div>
+            </div>
+            <div class="test-case">
+              <div class="test-case-header"><span class="test-badge tb-normal">Normal</span><span class="test-name">Death on day 1 of policy year</span></div>
+              <div class="test-desc">Policy dies on first day of study (fractional year ≈ 0)</div>
+              <div class="test-expect">→ initial_etr = 1.0 (full credit even though almost no time elapsed)</div>
+            </div>
+            <div class="test-case">
+              <div class="test-case-header"><span class="test-badge tb-normal">Normal</span><span class="test-name">Death on last day</span></div>
+              <div class="test-desc">Policy dies on last day of study year</div>
+              <div class="test-expect">→ initial_etr ≈ 1.0 (central_etr ≈ 1.0, correction ≈ 0)</div>
+            </div>
+            <div class="test-case">
+              <div class="test-case-header"><span class="test-badge tb-normal">Normal</span><span class="test-name">Lapse — no initial ETR difference</span></div>
+              <div class="test-desc">Policy lapses mid-year, no deaths in portfolio</div>
+              <div class="test-expect">→ initial_etr == central_etr (lapses get no uplift)</div>
+            </div>
+            <div class="test-case">
+              <div class="test-case-header"><span class="test-badge tb-edge">Edge</span><span class="test-name">Multiple deaths in same age cell</span></div>
+              <div class="test-desc">3 policies all age 45, all die at different points during year</div>
+              <div class="test-expect">→ initial_etr = sum of 3 × 1.0 = 3.0 for age 45</div>
+            </div>
+            <div class="test-case">
+              <div class="test-case-header"><span class="test-badge tb-boundary">Boundary</span><span class="test-name">Initial ETR ≥ Central ETR always</span></div>
+              <div class="test-desc">For any dataset, initial_etr >= central_etr in every cell</div>
+              <div class="test-expect">→ Invariant holds across 1000 randomly generated policies</div>
+            </div>
+            <div class="test-case">
+              <div class="test-case-header"><span class="test-badge tb-boundary">Boundary</span><span class="test-name">Zero deaths portfolio</span></div>
+              <div class="test-desc">Dataset with no death records at all</div>
+              <div class="test-expect">→ initial_etr == central_etr everywhere</div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="checkpoint">
+        <span class="checkpoint-icon">✦</span>
+        <span class="checkpoint-text"><strong>Checkpoint S05:</strong> Verify the "death on day 1" case manually — initial_etr must return 1.0 even when central_etr is essentially 0.003. This is the core actuarial invariant. The invariant test (initial ≥ central always) must pass on random data.</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- S06 -->
+  <div class="sprint">
+    <div class="sprint-header">
+      <span class="sprint-num">S06</span>
+      <span class="sprint-title">Standard Table Registry</span>
+      <span class="sprint-tag tag-core">CORE</span>
+    </div>
+    <div class="sprint-body">
+      <div class="sprint-grid">
+        <div class="s-section">
+          <div class="s-label">Claude Code Prompt</div>
+          <div class="prompt-box"><span class="kw">In lifexp/core/tables.py</span>, implement a mortality table registry.
+
+<span class="str">MortalityTable</span> dataclass:
+  name: str
+  age_min: int
+  age_max: int
+  data: pd.DataFrame    <span class="cmt"># columns: age, qx (and optionally: select_year, gender)</span>
+  table_type: Literal['ultimate', 'select_ultimate']
+  basis: str            <span class="cmt"># e.g., "A_1967_70", "custom"</span>
+
+  .qx(age: int, select_year: int = 0) -> float
+  .mu(age: float) -> float  <span class="cmt"># force of mortality, interpolated</span>
+  .interpolate(age: float, method: Literal['linear','cubic']) -> float
+
+<span class="str">TableRegistry</span>:
+  .register(table: MortalityTable)
+  .get(name: str) -> MortalityTable
+  .list_tables() -> list[str]
+  .load_from_csv(path, name, table_type, basis) -> MortalityTable
+
+<span class="kw">Bundle A 1967-70</span>:
+  Create lifexp/datasets/a_1967_70.csv with columns: age, qx
+  for ages 17-90 (use published CMI values)
+  Auto-register on import as "A_1967_70"
+
+<span class="kw">Write tests</span> in tests/core/test_tables.py</div>
+        </div>
+        <div class="s-section">
+          <div class="s-label">Test Cases</div>
+          <div class="test-block">
+            <div class="test-case">
+              <div class="test-case-header"><span class="test-badge tb-normal">Normal</span><span class="test-name">A 1967-70 lookup</span></div>
+              <div class="test-desc">TableRegistry().get("A_1967_70").qx(40)</div>
+              <div class="test-expect">→ Returns known published value (e.g., 0.00179 for age 40)</div>
+            </div>
+            <div class="test-case">
+              <div class="test-case-header"><span class="test-badge tb-normal">Normal</span><span class="test-name">Linear interpolation</span></div>
+              <div class="test-desc">qx at age 40.5 using linear interpolation</div>
+              <div class="test-expect">→ Returns value between qx(40) and qx(41)</div>
+            </div>
+            <div class="test-case">
+              <div class="test-case-header"><span class="test-badge tb-normal">Normal</span><span class="test-name">Custom CSV load</span></div>
+              <div class="test-desc">Load a user CSV with age, qx columns and register it</div>
+              <div class="test-expect">→ .get("my_table") works after registration</div>
+            </div>
+            <div class="test-case">
+              <div class="test-case-header"><span class="test-badge tb-edge">Edge</span><span class="test-name">Age out of range</span></div>
+              <div class="test-desc">qx(150) on a table with max age 90</div>
+              <div class="test-expect">→ Raises AgeOutOfRangeError with helpful message</div>
+            </div>
+            <div class="test-case">
+              <div class="test-case-header"><span class="test-badge tb-edge">Edge</span><span class="test-name">Duplicate registration</span></div>
+              <div class="test-desc">Register two tables with same name</div>
+              <div class="test-expect">→ Second overwrites first with a warning (not silent)</div>
+            </div>
+            <div class="test-case">
+              <div class="test-case-header"><span class="test-badge tb-edge">Edge</span><span class="test-name">CSV with missing ages</span></div>
+              <div class="test-desc">Load CSV with age gaps (e.g., skips ages 50-55)</div>
+              <div class="test-expect">→ load_from_csv raises DataError listing missing ages</div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="checkpoint">
+        <span class="checkpoint-icon">✦</span>
+        <span class="checkpoint-text"><strong>Checkpoint S06:</strong> Verify A 1967-70 values against the published CMI table. At least spot-check ages 30, 40, 50, 60, 70. The registry must auto-populate on <code>import lifexp</code> without any user call.</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- S07 -->
+  <div class="sprint">
+    <div class="sprint-header">
+      <span class="sprint-num">S07</span>
+      <span class="sprint-title">Segmentation Engine & Credibility Framework</span>
+      <span class="sprint-tag tag-core">CORE</span>
+    </div>
+    <div class="sprint-body">
+      <div class="sprint-grid">
+        <div class="s-section">
+          <div class="s-label">Claude Code Prompt</div>
+          <div class="prompt-box"><span class="kw">In lifexp/core/segmentation.py</span>, implement:
+
+<span class="str">segment(etr_df, deaths_df, group_by: list[str]) -> pd.DataFrame</span>
+  <span class="cmt"># Merges ETR and deaths on age + group_by keys</span>
+  <span class="cmt"># Adds: crude_rate = deaths / central_etr per cell</span>
+  <span class="cmt"># Flags cells below credibility threshold</span>
+
+<span class="kw">In lifexp/core/credibility.py</span>, implement:
+
+<span class="str">CredibilityConfig</span> dataclass:
+  method: Literal['classical','buhlmann']
+  full_credibility_threshold: int = 1082  <span class="cmt"># Longley-Cook, 95% CI ±5%</span>
+  partial_formula: Literal['square_root'] = 'square_root'
+
+<span class="str">classical_credibility(deaths: float, config: CredibilityConfig) -> float</span>
+  <span class="cmt"># Returns Z in [0,1]: min(sqrt(deaths/threshold), 1.0)</span>
+
+<span class="str">blend_rates(experience_rate, standard_rate, credibility_z) -> float</span>
+  <span class="cmt"># Returns Z * experience + (1-Z) * standard</span>
+
+<span class="str">apply_credibility(segment_df, standard_table: MortalityTable,
+                  config: CredibilityConfig) -> pd.DataFrame</span>
+  <span class="cmt"># Adds columns: credibility_z, blended_rate, is_fully_credible</span>
+
+<span class="kw">Write tests</span> in tests/core/test_credibility.py</div>
+        </div>
+        <div class="s-section">
+          <div class="s-label">Test Cases</div>
+          <div class="test-block">
+            <div class="test-case">
+              <div class="test-case-header"><span class="test-badge tb-normal">Normal</span><span class="test-name">Full credibility</span></div>
+              <div class="test-desc">deaths = 1082 (at threshold)</div>
+              <div class="test-expect">→ credibility_z = 1.0, blended_rate = experience_rate</div>
+            </div>
+            <div class="test-case">
+              <div class="test-case-header"><span class="test-badge tb-normal">Normal</span><span class="test-name">Zero credibility</span></div>
+              <div class="test-desc">deaths = 0</div>
+              <div class="test-expect">→ credibility_z = 0.0, blended_rate = standard_rate</div>
+            </div>
+            <div class="test-case">
+              <div class="test-case-header"><span class="test-badge tb-normal">Normal</span><span class="test-name">Partial credibility</span></div>
+              <div class="test-desc">deaths = 271 (quarter of threshold)</div>
+              <div class="test-expect">→ credibility_z = 0.5 (sqrt(271/1082))</div>
+            </div>
+            <div class="test-case">
+              <div class="test-case-header"><span class="test-badge tb-edge">Edge</span><span class="test-name">Deaths above threshold</span></div>
+              <div class="test-desc">deaths = 5000 (far above threshold)</div>
+              <div class="test-expect">→ credibility_z capped at 1.0</div>
+            </div>
+            <div class="test-case">
+              <div class="test-case-header"><span class="test-badge tb-boundary">Boundary</span><span class="test-name">Blending invariant</span></div>
+              <div class="test-desc">experience = standard_rate → blend must equal standard regardless of Z</div>
+              <div class="test-expect">→ blended_rate == standard_rate</div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="checkpoint">
+        <span class="checkpoint-icon">✦</span>
+        <span class="checkpoint-text"><strong>Checkpoint S07 — Phase 1 Gate:</strong> Run the full test suite: <code>pytest tests/ -v</code>. All tests across S01–S07 must be green. Count: expect ~35 tests. This is the Phase 1 boundary. Do not start Phase 2 until all pass.</span>
+      </div>
+    </div>
+  </div>
+</div><!-- end phase 1 -->
+
+
+<!-- ═══════════════════════════════════════════════════════════════ -->
+<!-- PHASE 2 -->
+<!-- ═══════════════════════════════════════════════════════════════ -->
+<div class="phase-block">
+  <div class="phase-header">
+    <span class="phase-pill ph-2">Phase 2</span>
+    <span class="phase-title">Graduation + Mortality + Lapse Studies</span>
+    <span class="phase-meta">Sprints S08 – S12</span>
+  </div>
+
+  <!-- S08 -->
+  <div class="sprint">
+    <div class="sprint-header">
+      <span class="sprint-num">S08</span>
+      <span class="sprint-title">Graduation Engine — 1D Methods</span>
+      <span class="sprint-tag tag-grad">GRADUATION</span>
+    </div>
+    <div class="sprint-body">
+      <div class="sprint-grid">
+        <div class="s-section">
+          <div class="s-label">Claude Code Prompt</div>
+          <div class="prompt-box"><span class="kw">In lifexp/graduation/whittaker.py</span>:
+
+<span class="str">whittaker_1d(crude_rates: pd.Series, weights: pd.Series,
+             lam: float, z: int = 2) -> pd.Series</span>
+  <span class="cmt"># Solves (W + λΔᵀΔ)g = Wq for graduated rates g</span>
+  <span class="cmt"># W = diagonal weight matrix (use ETR or deaths as weights)</span>
+  <span class="cmt"># Δ = z-th order difference matrix</span>
+  <span class="cmt"># lam = smoothing parameter</span>
+  <span class="cmt"># z = order of differences (2 is standard)</span>
+
+<span class="kw">In lifexp/graduation/parametric.py</span>:
+
+<span class="str">fit_gompertz(ages, qx) -> dict</span>
+  <span class="cmt"># Returns {'B': ..., 'c': ..., 'fitted_qx': Series}</span>
+  <span class="cmt"># Fit using scipy.optimize.curve_fit on mu_x = B*c^x</span>
+
+<span class="str">fit_makeham(ages, qx) -> dict</span>
+  <span class="cmt"># Returns {'A': ..., 'B': ..., 'c': ..., 'fitted_qx': Series}</span>
+
+<span class="kw">In lifexp/graduation/diagnostics.py</span>:
+
+<span class="str">chi_squared_test(crude, graduated, etr) -> dict</span>
+<span class="str">signs_test(crude, graduated) -> dict</span>
+<span class="str">graduation_report(crude, graduated, etr) -> dict</span>
+  <span class="cmt"># Returns all diagnostic results in one dict</span>
+
+<span class="kw">Write tests</span> in tests/graduation/test_whittaker.py</div>
+        </div>
+        <div class="s-section">
+          <div class="s-label">Test Cases</div>
+          <div class="test-block">
+            <div class="test-case">
+              <div class="test-case-header"><span class="test-badge tb-normal">Normal</span><span class="test-name">Smoothing reduces noise</span></div>
+              <div class="test-desc">Apply W-H to noisy qx series (add random noise to A 1967-70 rates)</div>
+              <div class="test-expect">→ Graduated rates smoother than crude (lower sum of squared 2nd differences)</div>
+            </div>
+            <div class="test-case">
+              <div class="test-case-header"><span class="test-badge tb-normal">Normal</span><span class="test-name">High λ → over-smooth</span></div>
+              <div class="test-desc">λ = 10,000 applied to any crude rates</div>
+              <div class="test-expect">→ Graduated rates approach straight line (near-zero 2nd differences)</div>
+            </div>
+            <div class="test-case">
+              <div class="test-case-header"><span class="test-badge tb-normal">Normal</span><span class="test-name">λ = 0 → crude = graduated</span></div>
+              <div class="test-desc">λ = 0, any weights > 0</div>
+              <div class="test-expect">→ graduated_rates == crude_rates (no smoothing)</div>
+            </div>
+            <div class="test-case">
+              <div class="test-case-header"><span class="test-badge tb-normal">Normal</span><span class="test-name">Gompertz fits A 1967-70</span></div>
+              <div class="test-desc">Fit Gompertz to published A 1967-70 rates ages 30-70</div>
+              <div class="test-expect">→ R² > 0.99 (Gompertz should fit mortality well over this range)</div>
+            </div>
+            <div class="test-case">
+              <div class="test-case-header"><span class="test-badge tb-edge">Edge</span><span class="test-name">Zero weight cell</span></div>
+              <div class="test-desc">One age cell with weight = 0 (no exposure)</div>
+              <div class="test-expect">→ Graduated rate at that age interpolated from neighbours, no div/zero</div>
+            </div>
+            <div class="test-case">
+              <div class="test-case-header"><span class="test-badge tb-edge">Edge</span><span class="test-name">Single age cell</span></div>
+              <div class="test-desc">Crude rates series with only 1 age</div>
+              <div class="test-expect">→ Returns that rate unchanged (nothing to smooth)</div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="checkpoint">
+        <span class="checkpoint-icon">✦</span>
+        <span class="checkpoint-text"><strong>Checkpoint S08:</strong> The λ=0 identity test and the sum-of-squares reduction test are the mathematical sanity checks. Chi-squared test output must include: statistic, p-value, degrees-of-freedom, pass/fail flag.</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- S09 -->
+  <div class="sprint">
+    <div class="sprint-header">
+      <span class="sprint-num">S09</span>
+      <span class="sprint-title">Graduation Engine — 2D (Age × Duration)</span>
+      <span class="sprint-tag tag-grad">GRADUATION</span>
+    </div>
+    <div class="sprint-body">
+      <div class="sprint-grid">
+        <div class="s-section">
+          <div class="s-label">Claude Code Prompt</div>
+          <div class="prompt-box"><span class="kw">In lifexp/graduation/whittaker_2d.py</span>:
+
+<span class="str">whittaker_2d(crude_surface: pd.DataFrame,
+             weights: pd.DataFrame,
+             lam_age: float, lam_dur: float,
+             z: int = 2) -> pd.DataFrame</span>
+  <span class="cmt"># crude_surface: rows=age, cols=duration, values=crude_rate</span>
+  <span class="cmt"># weights: same shape, values=ETR or deaths</span>
+  <span class="cmt"># Applies separate smoothing in age and duration dimensions</span>
+  <span class="cmt"># Returns graduated surface with same shape</span>
+
+<span class="kw">In lifexp/graduation/splines.py</span>:
+
+<span class="str">fit_pspline_2d(crude_surface, weights,
+               df_age=10, df_dur=6) -> pd.DataFrame</span>
+  <span class="cmt"># P-spline surface using B-spline basis</span>
+  <span class="cmt"># df_age = degrees of freedom in age direction</span>
+  <span class="cmt"># df_dur = degrees of freedom in duration direction</span>
+
+<span class="kw">In lifexp/graduation/parametric.py</span>, add:
+
+<span class="str">fit_weibull_decay(durations, rates) -> dict</span>
+  <span class="cmt"># Fits Weibull decay function over claim duration axis</span>
+  <span class="cmt"># Used in morbidity termination rate graduation</span>
+  <span class="cmt"># Returns {'shape': k, 'scale': λ, 'fitted': Series}</span>
+
+<span class="kw">Write tests</span> in tests/graduation/test_2d.py</div>
+        </div>
+        <div class="s-section">
+          <div class="s-label">Test Cases</div>
+          <div class="test-block">
+            <div class="test-case">
+              <div class="test-case-header"><span class="test-badge tb-normal">Normal</span><span class="test-name">2D smoothing reduces surface noise</span></div>
+              <div class="test-desc">Add random noise to a known smooth surface, apply 2D W-H</div>
+              <div class="test-expect">→ Graduated surface closer to original than noisy version</div>
+            </div>
+            <div class="test-case">
+              <div class="test-case-header"><span class="test-badge tb-normal">Normal</span><span class="test-name">Independent dimension smoothing</span></div>
+              <div class="test-desc">lam_dur = 0 → smoothing only in age dimension</div>
+              <div class="test-expect">→ Each duration column graduates independently (same as 1D W-H)</div>
+            </div>
+            <div class="test-case">
+              <div class="test-case-header"><span class="test-badge tb-normal">Normal</span><span class="test-name">Weibull fits decreasing rates</span></div>
+              <div class="test-desc">Fit Weibull to claim termination rates that decrease with duration</div>
+              <div class="test-expect">→ Shape parameter k < 1 (declining hazard), R² > 0.90</div>
+            </div>
+            <div class="test-case">
+              <div class="test-case-header"><span class="test-badge tb-edge">Edge</span><span class="test-name">Sparse 2D surface</span></div>
+              <div class="test-desc">Surface with 60% of cells having zero weight (no data)</div>
+              <div class="test-expect">→ Graduated surface still covers all cells without NaN</div>
+            </div>
+            <div class="test-case">
+              <div class="test-case-header"><span class="test-badge tb-edge">Edge</span><span class="test-name">Single duration column</span></div>
+              <div class="test-desc">Surface with only 1 duration column (duration axis has no smoothing)</span></div>
+              <div class="test-expect">→ Reduces to 1D W-H over age</div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="checkpoint">
+        <span class="checkpoint-icon">✦</span>
+        <span class="checkpoint-text"><strong>Checkpoint S09:</strong> The independent dimension test is critical — confirm that setting lam_dur=0 produces identical results to running 1D W-H on each column separately. This validates the 2D implementation's separability.</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- S10 -->
+  <div class="sprint">
+    <div class="sprint-header">
+      <span class="sprint-num">S10</span>
+      <span class="sprint-title">Mortality Study — Rates & A/E Analysis</span>
+      <span class="sprint-tag tag-study">STUDY</span>
+    </div>
+    <div class="sprint-body">
+      <div class="sprint-grid">
+        <div class="s-section">
+          <div class="s-label">Claude Code Prompt</div>
+          <div class="prompt-box"><span class="kw">In lifexp/mortality/study.py</span>, implement:
+
+<span class="str">MortalityStudy</span> class:
+  __init__(dataset: PolicyDataset, study: StudyPeriod,
+           age_basis: AgeBasis, standard_table: str = "A_1967_70",
+           group_by: list[str] = [])
+
+  .run() -> MortalityResults
+    <span class="cmt"># Computes: central_etr, initial_etr, deaths,</span>
+    <span class="cmt">#           crude_central_rate, crude_initial_rate,</span>
+    <span class="cmt">#           expected_deaths (from standard table × ETR)</span>
+    <span class="cmt">#           ae_ratio, ae_central, ae_initial</span>
+
+<span class="str">MortalityResults</span> dataclass:
+  summary_df: pd.DataFrame  <span class="cmt"># per age/group cell</span>
+  overall_ae: float          <span class="cmt"># aggregate A/E ratio</span>
+  total_deaths: int
+  total_etr: float
+  
+  .ae_by_age() -> pd.DataFrame
+  .ae_by_policy_year() -> pd.DataFrame
+  .confidence_interval(level=0.95) -> pd.DataFrame
+    <span class="cmt"># Poisson CI on deaths → CI on A/E ratio</span>
+  .graduate(method='whittaker', lam=100) -> pd.DataFrame
+    <span class="cmt"># Applies graduation to crude rates</span>
+  .ae_table(standard: str = "A_1967_70") -> pd.DataFrame
+    <span class="cmt"># Formatted A/E comparison table</span>
+
+<span class="kw">Write tests</span> in tests/mortality/test_study.py</div>
+        </div>
+        <div class="s-section">
+          <div class="s-label">Test Cases</div>
+          <div class="test-block">
+            <div class="test-case">
+              <div class="test-case-header"><span class="test-badge tb-normal">Normal</span><span class="test-name">A/E = 1.0 when experience matches table</span></div>
+              <div class="test-desc">Construct synthetic dataset where actual deaths == expected deaths from A 1967-70</div>
+              <div class="test-expect">→ overall_ae = 1.000 (±0.01 floating point)</div>
+            </div>
+            <div class="test-case">
+              <div class="test-case-header"><span class="test-badge tb-normal">Normal</span><span class="test-name">A/E = 0.5 when half expected deaths</span></div>
+              <div class="test-desc">Dataset where deaths = 50% of expected</div>
+              <div class="test-expect">→ overall_ae = 0.500</div>
+            </div>
+            <div class="test-case">
+              <div class="test-case-header"><span class="test-badge tb-normal">Normal</span><span class="test-name">Male/female segment A/E</span></div>
+              <div class="test-desc">group_by=['gender'], run study on mixed portfolio</div>
+              <div class="test-expect">→ Separate A/E ratios for M and F; weighted average = total A/E</div>
+            </div>
+            <div class="test-case">
+              <div class="test-case-header"><span class="test-badge tb-normal">Normal</span><span class="test-name">Confidence intervals widen with fewer deaths</span></div>
+              <div class="test-desc">CI at age 25 (few deaths) vs. age 60 (many deaths)</div>
+              <div class="test-expect">→ CI width at age 25 > CI width at age 60</div>
+            </div>
+            <div class="test-case">
+              <div class="test-case-header"><span class="test-badge tb-edge">Edge</span><span class="test-name">Zero deaths in an age cell</span></div>
+              <div class="test-desc">Age band 20-24 with no deaths</div>
+              <div class="test-expect">→ ae_ratio = 0.0, CI lower bound = 0.0, no division error</div>
+            </div>
+            <div class="test-case">
+              <div class="test-case-header"><span class="test-badge tb-edge">Edge</span><span class="test-name">All policies die</span></div>
+              <div class="test-desc">Dataset where every policy has status='DEATH'</div>
+              <div class="test-expect">→ ae_ratio computable; initial ETR = policy count</div>
+            </div>
+            <div class="test-case">
+              <div class="test-case-header"><span class="test-badge tb-boundary">Boundary</span><span class="test-name">Single policy, single death</span></div>
+              <div class="test-desc">Dataset with 1 policy that dies</div>
+              <div class="test-expect">→ Returns valid result, not error. ae_ratio = 1 death / expected</div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="checkpoint">
+        <span class="checkpoint-icon">✦</span>
+        <span class="checkpoint-text"><strong>Checkpoint S10:</strong> The A/E = 1.0 synthetic test is your gold standard. Build this test dataset carefully — it's the best regression test you'll have throughout the project. Keep it as a fixture.</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- S11 -->
+  <div class="sprint">
+    <div class="sprint-header">
+      <span class="sprint-num">S11</span>
+      <span class="sprint-title">Mortality Projection (Lee-Carter)</span>
+      <span class="sprint-tag tag-study">STUDY</span>
+    </div>
+    <div class="sprint-body">
+      <div class="sprint-grid">
+        <div class="s-section">
+          <div class="s-label">Claude Code Prompt</div>
+          <div class="prompt-box"><span class="kw">In lifexp/mortality/projection.py</span>:
+
+<span class="str">LeeCarter</span> class:
+  fit(mortality_matrix: pd.DataFrame)
+    <span class="cmt"># mortality_matrix: rows=age, cols=calendar_year, values=ln(qx)</span>
+    <span class="cmt"># Estimates ax, bx, kt using SVD</span>
+    <span class="cmt"># ax = row means of ln(qx)</span>
+    <span class="cmt"># bx, kt = first singular vectors/values</span>
+  
+  project(n_years: int, kt_model='arima') -> pd.DataFrame
+    <span class="cmt"># Projects kt forward n_years using ARIMA(0,1,0) (random walk)</span>
+    <span class="cmt"># Returns projected mortality matrix</span>
+  
+  life_expectancy(from_age: int, projected_year: int) -> float
+    <span class="cmt"># Curtate expectation of life e_x</span>
+
+<span class="str">apply_improvement_factors(base_table: MortalityTable,
+                           factors: pd.DataFrame,
+                           base_year: int,
+                           target_year: int) -> MortalityTable</span>
+  <span class="cmt"># factors: age × year DataFrame of annual improvement rates</span>
+  <span class="cmt"># Returns new MortalityTable for target_year</span>
+
+<span class="kw">Write tests</span> in tests/mortality/test_projection.py</div>
+        </div>
+        <div class="s-section">
+          <div class="s-label">Test Cases</div>
+          <div class="test-block">
+            <div class="test-case">
+              <div class="test-case-header"><span class="test-badge tb-normal">Normal</span><span class="test-name">SVD reconstruction</span></div>
+              <div class="test-desc">fit() on known matrix, check ax + bx*kt ≈ original ln(qx)</div>
+              <div class="test-expect">→ Reconstruction error < 5% for all cells</div>
+            </div>
+            <div class="test-case">
+              <div class="test-case-header"><span class="test-badge tb-normal">Normal</span><span class="test-name">Projected mortality decreasing</span></div>
+              <div class="test-desc">Project 20 years forward assuming declining kt trend</div>
+              <div class="test-expect">→ qx at age 60 in year+20 < qx at age 60 in base year</div>
+            </div>
+            <div class="test-case">
+              <div class="test-case-header"><span class="test-badge tb-normal">Normal</span><span class="test-name">Life expectancy increases with improvement</span></div>
+              <div class="test-desc">e_x at age 65 in projected year > e_x at age 65 in base year</div>
+              <div class="test-expect">→ Monotone improvement in e_x</div>
+            </div>
+            <div class="test-case">
+              <div class="test-case-header"><span class="test-badge tb-edge">Edge</span><span class="test-name">Single-year matrix</span></div>
+              <div class="test-desc">fit() with only 1 calendar year of data</div>
+              <div class="test-expect">→ Raises InsufficientDataError — at least 2 years needed for kt trend</div>
+            </div>
+            <div class="test-case">
+              <div class="test-case-header"><span class="test-badge tb-edge">Edge</span><span class="test-name">Zero improvement factor</span></div>
+              <div class="test-desc">apply_improvement_factors with all factors = 0</div>
+              <div class="test-expect">→ target table == base table (no change)</div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="checkpoint">
+        <span class="checkpoint-icon">✦</span>
+        <span class="checkpoint-text"><strong>Checkpoint S11:</strong> SVD reconstruction error test is mandatory. Lee-Carter is a well-understood model — if reconstruction error exceeds 5%, the SVD implementation has a bug.</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- S12 -->
+  <div class="sprint">
+    <div class="sprint-header">
+      <span class="sprint-num">S12</span>
+      <span class="sprint-title">Lapse & Persistency Study</span>
+      <span class="sprint-tag tag-study">STUDY</span>
+    </div>
+    <div class="sprint-body">
+      <div class="sprint-grid">
+        <div class="s-section">
+          <div class="s-label">Claude Code Prompt</div>
+          <div class="prompt-box"><span class="kw">In lifexp/lapse/study.py</span>:
+
+<span class="str">LapseStudy</span> class:
+  __init__(dataset, study, group_by=[])
+
+  .run() -> LapseResults
+    <span class="cmt"># Computes per policy_year × group cell:</span>
+    <span class="cmt"># - policies_exposed (count entering each policy year)</span>
+    <span class="cmt"># - lapses (count of LAPSED exits)</span>
+    <span class="cmt"># - surrenders (count of SURRENDERED exits)</span>
+    <span class="cmt"># - deaths (for competing decrement separation)</span>
+    <span class="cmt"># - gross_lapse_rate = lapses / policies_exposed</span>
+    <span class="cmt"># - net_lapse_rate = lapses / (policies_exposed - deaths/2)</span>
+
+<span class="str">LapseResults</span>:
+  .by_policy_year() -> pd.DataFrame
+  .persistency_table() -> pd.DataFrame
+    <span class="cmt"># Cumulative in-force % by policy year</span>
+    <span class="cmt"># 13th, 25th, 37th month persistency ratios</span>
+  .survival_curve() -> pd.DataFrame
+    <span class="cmt"># Kaplan-Meier estimate of survival by policy month</span>
+  .ae_vs_assumption(assumption_table: pd.DataFrame) -> pd.DataFrame
+    <span class="cmt"># assumption_table: policy_year → assumed_lapse_rate</span>
+
+<span class="kw">Write tests</span> in tests/lapse/test_study.py</div>
+        </div>
+        <div class="s-section">
+          <div class="s-label">Test Cases</div>
+          <div class="test-block">
+            <div class="test-case">
+              <div class="test-case-header"><span class="test-badge tb-normal">Normal</span><span class="test-name">Lapse rate by year</span></div>
+              <div class="test-desc">100 policies, 10 lapse in year 1, 5 lapse in year 2</div>
+              <div class="test-expect">→ year 1 rate = 0.10, year 2 rate = 5/90 = 0.0556</div>
+            </div>
+            <div class="test-case">
+              <div class="test-case-header"><span class="test-badge tb-normal">Normal</span><span class="test-name">Persistency table</span></div>
+              <div class="test-desc">10% lapse rate each year for 5 years</div>
+              <div class="test-expect">→ Year 5 persistency = 0.9^5 = 0.5905</div>
+            </div>
+            <div class="test-case">
+              <div class="test-case-header"><span class="test-badge tb-normal">Normal</span><span class="test-name">Net vs gross lapse rate</span></div>
+              <div class="test-desc">Portfolio with both deaths and lapses in same year</div>
+              <div class="test-expect">→ net_lapse_rate > gross_lapse_rate (deaths removed from denominator)</div>
+            </div>
+            <div class="test-case">
+              <div class="test-case-header"><span class="test-badge tb-edge">Edge</span><span class="test-name">Zero lapses in year</span></div>
+              <div class="test-desc">All policies survive year 3 (no exits)</div>
+              <div class="test-expect">→ lapse_rate = 0.0, persistency unchanged from prior year</div>
+            </div>
+            <div class="test-case">
+              <div class="test-case-header"><span class="test-badge tb-edge">Edge</span><span class="test-name">All policies lapse year 1</span></div>
+              <div class="test-desc">100% lapse rate in policy year 1</div>
+              <div class="test-expect">→ Year 2 has 0 policies exposed, persistency = 0%</div>
+            </div>
+            <div class="test-case">
+              <div class="test-case-header"><span class="test-badge tb-normal">Normal</span><span class="test-name">A/E against assumption</span></div>
+              <div class="test-desc">Actual lapse = 8%, assumed = 10%</div>
+              <div class="test-expect">→ A/E = 0.80</div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="checkpoint">
+        <span class="checkpoint-icon">✦</span>
+        <span class="checkpoint-text"><strong>Checkpoint S12 — Phase 2 Gate:</strong> Run full test suite. All S01–S12 tests must pass (~55 tests expected). The persistency table compound test (0.9^5 = 0.5905) validates the cumulative calculation chain.</span>
+      </div>
+    </div>
+  </div>
+</div><!-- end phase 2 -->
+
+
+<!-- ═══════════════════════════════════════════════════════════════ -->
+<!-- PHASE 3 -->
+<!-- ═══════════════════════════════════════════════════════════════ -->
+<div class="phase-block">
+  <div class="phase-header">
+    <span class="phase-pill ph-3">Phase 3</span>
+    <span class="phase-title">Morbidity, Reinsurance & Expense Studies</span>
+    <span class="phase-meta">Sprints S13 – S17</span>
+  </div>
+
+  <!-- S13 -->
+  <div class="sprint">
+    <div class="sprint-header">
+      <span class="sprint-num">S13</span>
+      <span class="sprint-title">Dual Exposed-to-Risk for Morbidity</span>
+      <span class="sprint-tag tag-core">CORE</span>
+    </div>
+    <div class="sprint-body">
+      <div class="sprint-grid">
+        <div class="s-section">
+          <div class="s-label">Claude Code Prompt</div>
+          <div class="prompt-box"><span class="kw">Extend lifexp/core/exposure.py</span> with dual ETR for morbidity.
+
+<span class="str">dual_etr(policy_dataset: PolicyDataset,
+         claim_dataset: ClaimDataset,
+         study: StudyPeriod,
+         deferred_days: int,
+         age_basis: AgeBasis,
+         group_by: list[str]) -> DualETRResult</span>
+
+<span class="kw">First</span>, create <span class="str">ClaimDataset</span> in lifexp/core/data_model.py:
+  ClaimRecord fields:
+    claim_id: str
+    policy_id: str
+    claim_start_date: date
+    claim_end_date: Optional[date]  <span class="cmt"># None if still on claim</span>
+    claim_status: Literal['OPEN','CLOSED_RECOVERY','CLOSED_DEATH','CLOSED_MATURITY']
+    benefit_type: Literal['LUMP_SUM','PERIODIC']
+    claim_amount: float
+    benefit_period_days: Optional[int]
+
+<span class="kw">DualETRResult</span> contains:
+  healthy_etr: pd.DataFrame   <span class="cmt"># Healthy lives exposed (denominator for incidence)</span>
+  sick_etr: pd.DataFrame      <span class="cmt"># Sick lives exposed (denominator for termination)</span>
+  new_claims: pd.DataFrame    <span class="cmt"># Claim incidences by age × group</span>
+  claim_terminations: pd.DataFrame  <span class="cmt"># Recoveries + deaths from sick state</span>
+
+<span class="kw">Key logic</span>:
+  - A policy contributes to healthy_etr only while it is NOT on claim
+  - A policy contributes to sick_etr only while it IS on claim
+  - Deferred period: new claims only counted after deferred_days elapsed
+  - A policy that claims is removed from healthy_etr on claim_start_date
+
+<span class="kw">Write tests</span> in tests/morbidity/test_dual_etr.py</div>
+        </div>
+        <div class="s-section">
+          <div class="s-label">Test Cases</div>
+          <div class="test-block">
+            <div class="test-case">
+              <div class="test-case-header"><span class="test-badge tb-normal">Normal</span><span class="test-name">Healthy + sick ETR sum = total ETR</span></div>
+              <div class="test-desc">For any policy: healthy_etr + sick_etr = total observation time</div>
+              <div class="test-expect">→ Conservation holds for all policies</div>
+            </div>
+            <div class="test-case">
+              <div class="test-case-header"><span class="test-badge tb-normal">Normal</span><span class="test-name">Deferred period exclusion</span></div>
+              <div class="test-desc">Claim starts day 10, deferred_days=30 → claim not counted</div>
+              <div class="test-expect">→ new_claims count = 0 for that policy; claim excluded from incidence</div>
+            </div>
+            <div class="test-case">
+              <div class="test-case-header"><span class="test-badge tb-normal">Normal</span><span class="test-name">Never-ill policy</span></div>
+              <div class="test-desc">Policy with no claims throughout study period</div>
+              <div class="test-expect">→ healthy_etr = full observation time, sick_etr = 0</div>
+            </div>
+            <div class="test-case">
+              <div class="test-case-header"><span class="test-badge tb-edge">Edge</span><span class="test-name">Multiple claims same policy</span></div>
+              <div class="test-desc">Policy claims, recovers, then claims again</div>
+              <div class="test-expect">→ sick_etr captures both claim periods; healthy_etr captures gap; new_claims = 2</div>
+            </div>
+            <div class="test-case">
+              <div class="test-case-header"><span class="test-badge tb-edge">Edge</span><span class="test-name">Claim spans study end</span></div>
+              <div class="test-desc">Claim starts before study end, no end date (still open)</div>
+              <div class="test-expect">→ sick_etr counted to study.end_date; claim_status=OPEN handled</div>
+            </div>
+            <div class="test-case">
+              <div class="test-case-header"><span class="test-badge tb-boundary">Boundary</span><span class="test-name">Deferred = 0</span></div>
+              <div class="test-desc">deferred_days=0, claim starts immediately</div>
+              <div class="test-expect">→ All claims counted, no exclusions due to deferral</div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="checkpoint">
+        <span class="checkpoint-icon">✦</span>
+        <span class="checkpoint-text"><strong>Checkpoint S13:</strong> The conservation invariant (healthy + sick = total) must hold for every policy in a 200-policy test dataset. This is the morbidity equivalent of the ETR sum check from S04.</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- S14 -->
+  <div class="sprint">
+    <div class="sprint-header">
+      <span class="sprint-num">S14</span>
+      <span class="sprint-title">Morbidity Study — Incidence & Termination</span>
+      <span class="sprint-tag tag-study">STUDY</span>
+    </div>
+    <div class="sprint-body">
+      <div class="sprint-grid">
+        <div class="s-section">
+          <div class="s-label">Claude Code Prompt</div>
+          <div class="prompt-box"><span class="kw">In lifexp/morbidity/study.py</span>:
+
+<span class="str">MorbidityStudy</span> class:
+  __init__(policy_dataset, claim_dataset, study,
+           deferred_days, ri_table: str = None, group_by=[])
+  
+  .run() -> MorbidityResults
+
+<span class="str">MorbidityResults</span>:
+  incidence_df: pd.DataFrame
+    <span class="cmt"># age, group, healthy_etr, new_claims, incidence_rate</span>
+  termination_df: pd.DataFrame
+    <span class="cmt"># duration_on_claim, age, sick_etr, recoveries, deaths,</span>
+    <span class="cmt"># recovery_rate, death_on_claim_rate</span>
+  severity_df: pd.DataFrame
+    <span class="cmt"># claim_amount stats: mean, median, p95, fitted_distribution</span>
+  
+  .ae_incidence(ri_table: MortalityTable) -> pd.DataFrame
+    <span class="cmt"># A/E on incidence: actual claims vs. ri_rate × healthy_etr</span>
+  .ae_cost_ratio(ri_table) -> pd.DataFrame
+    <span class="cmt"># Current method: actual_cost / (healthy_etr × SA × ri_rate)</span>
+    <span class="cmt"># Also produces duration-adjusted A/E for periodic benefits</span>
+  .severity_fit(distribution='lognormal') -> dict
+    <span class="cmt"># Fits lognormal or gamma to claim amounts</span>
+
+<span class="kw">Write tests</span> in tests/morbidity/test_study.py</div>
+        </div>
+        <div class="s-section">
+          <div class="s-label">Test Cases</div>
+          <div class="test-block">
+            <div class="test-case">
+              <div class="test-case-header"><span class="test-badge tb-normal">Normal</span><span class="test-name">Incidence rate calculation</span></div>
+              <div class="test-desc">1000 healthy life-years, 50 new claims → incidence rate = 0.05</div>
+              <div class="test-expect">→ incidence_rate = 0.050 per life-year</div>
+            </div>
+            <div class="test-case">
+              <div class="test-case-header"><span class="test-badge tb-normal">Normal</span><span class="test-name">Cost ratio A/E = 1.0</span></div>
+              <div class="test-desc">Synthetic dataset where actual cost = ri_rate × etr × SA exactly</div>
+              <div class="test-expect">→ ae_cost_ratio = 1.000</div>
+            </div>
+            <div class="test-case">
+              <div class="test-case-header"><span class="test-badge tb-normal">Normal</span><span class="test-name">Duration A/E for periodic benefit</span></div>
+              <div class="test-desc">Periodic benefit where actual duration > assumed → cost higher</div>
+              <div class="test-expect">→ duration-adjusted A/E > cost-ratio A/E (captures additional duration risk)</div>
+            </div>
+            <div class="test-case">
+              <div class="test-case-header"><span class="test-badge tb-normal">Normal</span><span class="test-name">Lognormal severity fit</span></div>
+              <div class="test-desc">Fit lognormal to 500 claim amounts generated from known μ, σ</div>
+              <div class="test-expect">→ Fitted parameters within 5% of generating parameters</div>
+            </div>
+            <div class="test-case">
+              <div class="test-case-header"><span class="test-badge tb-edge">Edge</span><span class="test-name">Zero claims in study</span></div>
+              <div class="test-desc">Dataset with no claims at all</div>
+              <div class="test-expect">→ incidence_rate = 0.0, ae_cost_ratio = 0.0, no division error</div>
+            </div>
+            <div class="test-case">
+              <div class="test-case-header"><span class="test-badge tb-edge">Edge</span><span class="test-name">All claims open (no terminations)</span></div>
+              <div class="test-desc">All claims still open at study end date</div>
+              <div class="test-expect">→ termination_df has zero recovery/death rates, sick_etr correctly accumulated</div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="checkpoint">
+        <span class="checkpoint-icon">✦</span>
+        <span class="checkpoint-text"><strong>Checkpoint S14:</strong> Verify that the duration-adjusted A/E for periodic benefits is higher than the simple cost-ratio A/E when claims last longer than assumed. This is the key methodological improvement over your current practice.</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- S15 -->
+  <div class="sprint">
+    <div class="sprint-header">
+      <span class="sprint-num">S15</span>
+      <span class="sprint-title">Multi-State Model (Healthy-Sick-Dead)</span>
+      <span class="sprint-tag tag-study">STUDY</span>
+    </div>
+    <div class="sprint-body">
+      <div class="sprint-grid">
+        <div class="s-section">
+          <div class="s-label">Claude Code Prompt</div>
+          <div class="prompt-box"><span class="kw">In lifexp/morbidity/multistate.py</span>:
+
+<span class="str">HSDModel</span> class (Healthy-Sick-Dead):
+  Transition intensities:
+    σ(x)  = Healthy → Sick  (incidence rate)
+    ρ(x)  = Sick → Healthy  (recovery rate)
+    μ(x)  = Healthy → Dead  (mortality rate)
+    ν(x)  = Sick → Dead     (mortality-on-claim rate)
+  
+  .fit(morbidity_results: MorbidityResults,
+       mortality_results: MortalityResults)
+    <span class="cmt"># Sets transition intensities from study results</span>
+  
+  .state_probabilities(age_from: int, age_to: int,
+                       initial_state: str = 'H') -> pd.DataFrame
+    <span class="cmt"># Solves Kolmogorov forward equations numerically (scipy.integrate.odeint)</span>
+    <span class="cmt"># Returns P_HH(x,t), P_HS(x,t), P_HD(x,t) for each age t</span>
+  
+  .active_prevalence(age: int) -> float
+    <span class="cmt"># P(in sick state at age x | alive at start age)</span>
+  
+  .expected_claim_cost(age_from, age_to,
+                       benefit_pa, interest_rate) -> float
+    <span class="cmt"># EPV of disability annuity from age_from to age_to</span>
+
+<span class="kw">Write tests</span> in tests/morbidity/test_multistate.py</div>
+        </div>
+        <div class="s-section">
+          <div class="s-label">Test Cases</div>
+          <div class="test-block">
+            <div class="test-case">
+              <div class="test-case-header"><span class="test-badge tb-normal">Normal</span><span class="test-name">State probabilities sum to 1</span></div>
+              <div class="test-desc">P_HH + P_HS + P_HD = 1.0 at all ages</div>
+              <div class="test-expect">→ Holds to within 1e-6 at every time step</div>
+            </div>
+            <div class="test-case">
+              <div class="test-case-header"><span class="test-badge tb-normal">Normal</span><span class="test-name">At time 0, P_HH = 1</span></div>
+              <div class="test-desc">Initial condition: start in healthy state</div>
+              <div class="test-expect">→ P_HH(x,x) = 1.0, P_HS = P_HD = 0.0</div>
+            </div>
+            <div class="test-case">
+              <div class="test-case-header"><span class="test-badge tb-normal">Normal</span><span class="test-name">Zero incidence → no sick state</span></div>
+              <div class="test-desc">σ(x) = 0 for all ages</div>
+              <div class="test-expect">→ P_HS = 0 at all ages; model degenerates to pure mortality</div>
+            </div>
+            <div class="test-case">
+              <div class="test-case-header"><span class="test-badge tb-normal">Normal</span><span class="test-name">EPV decreases with higher interest rate</span></div>
+              <div class="test-desc">Compute EPV at 3% and 5% discount</div>
+              <div class="test-expect">→ EPV(5%) < EPV(3%)</div>
+            </div>
+            <div class="test-case">
+              <div class="test-case-header"><span class="test-badge tb-edge">Edge</span><span class="test-name">Very high recovery rate</span></div>
+              <div class="test-desc">ρ(x) = 100 (near-instant recovery)</div>
+              <div class="test-expect">→ P_HS approaches 0 at all times; model stable (no instability)</div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="checkpoint">
+        <span class="checkpoint-icon">✦</span>
+        <span class="checkpoint-text"><strong>Checkpoint S15:</strong> State probability sum-to-1 is the conservation law of the ODE system. If this fails, the Kolmogorov solver has a numerical integration error — tighten the ODE solver tolerance.</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- S16 -->
+  <div class="sprint">
+    <div class="sprint-header">
+      <span class="sprint-num">S16</span>
+      <span class="sprint-title">Reinsurance Module</span>
+      <span class="sprint-tag tag-study">STUDY</span>
+    </div>
+    <div class="sprint-body">
+      <div class="sprint-grid">
+        <div class="s-section">
+          <div class="s-label">Claude Code Prompt</div>
+          <div class="prompt-box"><span class="kw">In lifexp/reinsurance/study.py</span>:
+
+<span class="str">RIStudy</span> class:
+  __init__(dataset, claim_data, study,
+           ri_table: MortalityTable,
+           treaty_type: Literal['YRT','COINSURANCE','MODCO'],
+           retention_rate: float = 1.0,
+           group_by=[])
+  
+  .run() -> RIResults
+
+<span class="str">RIResults</span>:
+  .ae_by_age() -> pd.DataFrame
+    <span class="cmt"># actual_ri_claims vs expected from ri_rate × SA × etr</span>
+  .ae_by_treaty() -> pd.DataFrame
+    <span class="cmt"># if policies tagged with treaty_id</span>
+  .loss_ratio() -> float
+    <span class="cmt"># actual claims / earned premium (for profit share monitoring)</span>
+  .implied_mortality() -> pd.DataFrame
+    <span class="cmt"># back-calculated q_x from claims vs. ri_rate implied q_x</span>
+  .cost_sensitivity(delta_pct: float) -> pd.DataFrame
+    <span class="cmt"># Impact of ±delta_pct shift in mortality on RI cost</span>
+  .break_even_mortality() -> float
+    <span class="cmt"># Mortality rate at which actual cost = RI premium earned</span>
+
+<span class="kw">Write tests</span> in tests/reinsurance/test_study.py</div>
+        </div>
+        <div class="s-section">
+          <div class="s-label">Test Cases</div>
+          <div class="test-block">
+            <div class="test-case">
+              <div class="test-case-header"><span class="test-badge tb-normal">Normal</span><span class="test-name">A/E = 1.0 when experience matches RI rates</span></div>
+              <div class="test-desc">Actual claims = ri_rate × SA × etr exactly</div>
+              <div class="test-expect">→ ae_ratio = 1.000</div>
+            </div>
+            <div class="test-case">
+              <div class="test-case-header"><span class="test-badge tb-normal">Normal</span><span class="test-name">Cost sensitivity direction</span></div>
+              <div class="test-desc">+10% mortality shift</div>
+              <div class="test-expect">→ RI cost increases by approximately 10%</div>
+            </div>
+            <div class="test-case">
+              <div class="test-case-header"><span class="test-badge tb-normal">Normal</span><span class="test-name">Loss ratio < 1 when profitable</span></div>
+              <div class="test-desc">Actual claims < expected from RI table</div>
+              <div class="test-expect">→ loss_ratio < 1.0</div>
+            </div>
+            <div class="test-case">
+              <div class="test-case-header"><span class="test-badge tb-edge">Edge</span><span class="test-name">Zero claims in study</span></div>
+              <div class="test-desc">No deaths in dataset</div>
+              <div class="test-expect">→ ae_ratio = 0.0, loss_ratio = 0.0, no error</div>
+            </div>
+            <div class="test-case">
+              <div class="test-case-header"><span class="test-badge tb-edge">Edge</span><span class="test-name">100% retention rate</span></div>
+              <div class="test-desc">All risk retained (no reinsurance)</div>
+              <div class="test-expect">→ RI results equal direct mortality results</div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="checkpoint">
+        <span class="checkpoint-icon">✦</span>
+        <span class="checkpoint-text"><strong>Checkpoint S16:</strong> Cost sensitivity must be approximately linear for small shifts (±5%). The break-even mortality rate must be validated by substituting it back into the cost formula and confirming loss_ratio = 1.0.</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- S17 -->
+  <div class="sprint">
+    <div class="sprint-header">
+      <span class="sprint-num">S17</span>
+      <span class="sprint-title">Expense Study</span>
+      <span class="sprint-tag tag-study">STUDY</span>
+    </div>
+    <div class="sprint-body">
+      <div class="sprint-grid">
+        <div class="s-section">
+          <div class="s-label">Claude Code Prompt</div>
+          <div class="prompt-box"><span class="kw">In lifexp/expense/study.py</span>:
+
+<span class="str">ExpenseStudy</span> class:
+  __init__(expense_data: pd.DataFrame,
+           policy_data: PolicyDataset,
+           study: StudyPeriod,
+           allocation_keys: dict)
+  
+  <span class="cmt"># expense_data: DataFrame with columns:</span>
+  <span class="cmt">#   cost_centre, expense_type, amount, year</span>
+  <span class="cmt"># allocation_keys: {'acquisition': 'new_policies',</span>
+  <span class="cmt">#                   'renewal': 'if_policy_count', ...}</span>
+  
+  .run() -> ExpenseResults
+
+<span class="str">ExpenseResults</span>:
+  .unit_costs() -> pd.DataFrame
+    <span class="cmt"># per_policy, per_premium_pct, per_SA for each year</span>
+  .ae_vs_assumption(assumption: dict) -> pd.DataFrame
+    <span class="cmt"># assumption: {'per_policy': X, 'per_premium_pct': Y}</span>
+  .inflation_analysis() -> pd.DataFrame
+    <span class="cmt"># YoY unit cost change rates</span>
+
+<span class="kw">Also in lifexp/expense/commission.py</span>:
+
+<span class="str">CommissionStudy</span> class:
+  __init__(commission_data: pd.DataFrame,
+           schedule: pd.DataFrame,
+           study: StudyPeriod)
+  
+  .run() -> CommissionResults
+  .flag_anomalies(method='ensemble') -> pd.DataFrame
+    <span class="cmt"># Applies Z-score + MAD + IQR flagging (port from your existing work)</span>
+
+<span class="kw">Write tests</span> in tests/expense/test_study.py</div>
+        </div>
+        <div class="s-section">
+          <div class="s-label">Test Cases</div>
+          <div class="test-block">
+            <div class="test-case">
+              <div class="test-case-header"><span class="test-badge tb-normal">Normal</span><span class="test-name">Per-policy unit cost</span></div>
+              <div class="test-desc">Total renewal expenses = 1,000,000, 500 policies in-force</div>
+              <div class="test-expect">→ per_policy = 2,000.00</div>
+            </div>
+            <div class="test-case">
+              <div class="test-case-header"><span class="test-badge tb-normal">Normal</span><span class="test-name">Inflation rate calculation</span></div>
+              <div class="test-desc">Per-policy cost: year 1 = 2,000, year 2 = 2,120</div>
+              <div class="test-expect">→ inflation_rate = 6.0% for year 2</div>
+            </div>
+            <div class="test-case">
+              <div class="test-case-header"><span class="test-badge tb-normal">Normal</span><span class="test-name">Commission anomaly detection</span></div>
+              <div class="test-desc">Agent with 5× normal payment flagged</div>
+              <div class="test-expect">→ Appears in flag_anomalies() output with all 3 methods flagging</div>
+            </div>
+            <div class="test-case">
+              <div class="test-case-header"><span class="test-badge tb-edge">Edge</span><span class="test-name">Zero policies in year</span></div>
+              <div class="test-desc">Year with expenses but zero in-force policies</div>
+              <div class="test-expect">→ Returns inf or NaN with warning — not silent division by zero</div>
+            </div>
+            <div class="test-case">
+              <div class="test-case-header"><span class="test-badge tb-edge">Edge</span><span class="test-name">Single-agent commission study</span></div>
+              <div class="test-desc">CommissionStudy with only 1 agent in dataset</div>
+              <div class="test-expect">→ No statistical anomaly detection possible; returns warning</div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="checkpoint">
+        <span class="checkpoint-icon">✦</span>
+        <span class="checkpoint-text"><strong>Checkpoint S17 — Phase 3 Gate:</strong> Full suite run (~75 tests). The commission anomaly detection must match your existing implementation's output on the same input data — use that as a regression fixture.</span>
+      </div>
+    </div>
+  </div>
+</div><!-- end phase 3 -->
+
+
+<!-- ═══════════════════════════════════════════════════════════════ -->
+<!-- PHASE 4 -->
+<!-- ═══════════════════════════════════════════════════════════════ -->
+<div class="phase-block">
+  <div class="phase-header">
+    <span class="phase-pill ph-4">Phase 4</span>
+    <span class="phase-title">Reporting, API & End-to-End Integration</span>
+    <span class="phase-meta">Sprints S18 – S22</span>
+  </div>
+
+  <!-- S18 -->
+  <div class="sprint">
+    <div class="sprint-header">
+      <span class="sprint-num">S18</span>
+      <span class="sprint-title">Reporting — HTML & Excel Output</span>
+      <span class="sprint-tag tag-report">OUTPUT</span>
+    </div>
+    <div class="sprint-body">
+      <div class="sprint-grid">
+        <div class="s-section">
+          <div class="s-label">Claude Code Prompt</div>
+          <div class="prompt-box"><span class="kw">In lifexp/reporting/html_report.py</span>:
+
+<span class="str">HTMLReport</span> class:
+  __init__(title: str, study_metadata: dict)
+  .add_ae_table(df, caption: str)
+  .add_graduation_table(crude_df, graduated_df)
+  .add_summary_stats(stats: dict)
+  .render(output_path: str)
+    <span class="cmt"># Produces self-contained HTML with embedded MathJax</span>
+    <span class="cmt"># MathJax for formulas: A/E ratio, ETR, credibility</span>
+    <span class="cmt"># Tables styled with readable fonts, alternating rows</span>
+    <span class="cmt"># Study metadata in header: period, table used, methodology</span>
+
+<span class="kw">In lifexp/reporting/excel_report.py</span>:
+
+<span class="str">ExcelReport</span> class:
+  .add_ae_sheet(df, sheet_name: str)
+  .add_summary_sheet(results_dict: dict)
+  .render(output_path: str)
+    <span class="cmt"># Uses openpyxl</span>
+    <span class="cmt"># Formats: header row bold, number format for rates (4dp)</span>
+    <span class="cmt"># Conditional formatting: A/E > 1.2 red, A/E < 0.8 green</span>
+
+<span class="kw">Write tests</span> in tests/reporting/test_html.py
+<span class="cmt"># Tests check file is created and contains expected strings</span>
+<span class="cmt"># Do not test visual rendering</span></div>
+        </div>
+        <div class="s-section">
+          <div class="s-label">Test Cases</div>
+          <div class="test-block">
+            <div class="test-case">
+              <div class="test-case-header"><span class="test-badge tb-normal">Normal</span><span class="test-name">HTML renders without MathJax error</span></div>
+              <div class="test-desc">Render report, open in browser, check MathJax loads</div>
+              <div class="test-expect">→ No JS errors; formulas display correctly</div>
+            </div>
+            <div class="test-case">
+              <div class="test-case-header"><span class="test-badge tb-normal">Normal</span><span class="test-name">Excel file opens and has correct sheets</span></div>
+              <div class="test-desc">Render Excel, open with openpyxl, check sheet names</div>
+              <div class="test-expect">→ All added sheets present by name</div>
+            </div>
+            <div class="test-case">
+              <div class="test-case-header"><span class="test-badge tb-normal">Normal</span><span class="test-name">A/E table values preserved in HTML</span></div>
+              <div class="test-desc">Parse rendered HTML, extract table values</div>
+              <div class="test-expect">→ Values match source DataFrame to 4 decimal places</div>
+            </div>
+            <div class="test-case">
+              <div class="test-case-header"><span class="test-badge tb-edge">Edge</span><span class="test-name">Empty DataFrame</span></div>
+              <div class="test-desc">add_ae_table with 0-row DataFrame</div>
+              <div class="test-expect">→ Renders "No data" message, not empty table</div>
+            </div>
+            <div class="test-case">
+              <div class="test-case-header"><span class="test-badge tb-edge">Edge</span><span class="test-name">Output path doesn't exist</span></div>
+              <div class="test-desc">render() to non-existent directory</div>
+              <div class="test-expect">→ Creates directory automatically or raises clear FileNotFoundError</div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="checkpoint">
+        <span class="checkpoint-icon">✦</span>
+        <span class="checkpoint-text"><strong>Checkpoint S18:</strong> Manually open the generated HTML and Excel files and visually inspect. Automated tests cannot catch layout issues — human review required here before S19.</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- S19 -->
+  <div class="sprint">
+    <div class="sprint-header">
+      <span class="sprint-num">S19</span>
+      <span class="sprint-title">Visualisation Engine</span>
+      <span class="sprint-tag tag-report">OUTPUT</span>
+    </div>
+    <div class="sprint-body">
+      <div class="sprint-grid">
+        <div class="s-section">
+          <div class="s-label">Claude Code Prompt</div>
+          <div class="prompt-box"><span class="kw">In lifexp/reporting/charts.py</span>, implement:
+
+<span class="str">plot_ae_by_age(ae_df, title, output_path=None)</span>
+  <span class="cmt"># Bar chart: A/E ratio by age band</span>
+  <span class="cmt"># Confidence interval whiskers</span>
+  <span class="cmt"># Horizontal line at A/E = 1.0</span>
+  <span class="cmt"># Matplotlib; returns Figure object</span>
+
+<span class="str">plot_crude_vs_graduated(ages, crude, graduated, output_path=None)</span>
+  <span class="cmt"># Line chart with log-scale y-axis option</span>
+  <span class="cmt"># Two series: crude rates (dots) vs graduated (line)</span>
+
+<span class="str">plot_ae_heatmap(ae_surface: pd.DataFrame, output_path=None)</span>
+  <span class="cmt"># Rows=age, cols=policy_year, values=A/E ratio</span>
+  <span class="cmt"># Seaborn heatmap with diverging colormap (red=high, green=low)</span>
+  <span class="cmt"># Center at 1.0</span>
+
+<span class="str">plot_survival_curve(km_df, output_path=None)</span>
+  <span class="cmt"># Kaplan-Meier curve with step function</span>
+  <span class="cmt"># Confidence band (optional)</span>
+
+<span class="str">plot_lapse_funnel(lapse_df, output_path=None)</span>
+  <span class="cmt"># Bar chart of in-force count by policy year</span>
+  <span class="cmt"># Shows declining funnel shape</span>
+
+<span class="kw">All chart functions</span>:
+  - Return matplotlib Figure (don't call plt.show())
+  - Accept output_path to save; None = return only
+  - Include chart title, axis labels, legend
+
+<span class="kw">Write tests</span>: confirm Figure objects returned, files saved when path given.</div>
+        </div>
+        <div class="s-section">
+          <div class="s-label">Test Cases</div>
+          <div class="test-block">
+            <div class="test-case">
+              <div class="test-case-header"><span class="test-badge tb-normal">Normal</span><span class="test-name">Returns Figure object</span></div>
+              <div class="test-desc">Call each chart function with valid data</div>
+              <div class="test-expect">→ Returns matplotlib.figure.Figure instance</div>
+            </div>
+            <div class="test-case">
+              <div class="test-case-header"><span class="test-badge tb-normal">Normal</span><span class="test-name">File saved when path provided</span></div>
+              <div class="test-desc">output_path = "/tmp/test_chart.png"</div>
+              <div class="test-expect">→ File exists at that path after call</div>
+            </div>
+            <div class="test-case">
+              <div class="test-case-header"><span class="test-badge tb-edge">Edge</span><span class="test-name">Single data point</span></div>
+              <div class="test-desc">ae_df with only 1 age band</div>
+              <div class="test-expect">→ Chart renders without error (single bar)</div>
+            </div>
+            <div class="test-case">
+              <div class="test-case-header"><span class="test-badge tb-edge">Edge</span><span class="test-name">NaN values in A/E</span></div>
+              <div class="test-desc">Some age bands with NaN A/E (zero exposure)</div>
+              <div class="test-expect">→ NaN cells shown as blank/grey in heatmap, not as 0 or error</div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="checkpoint">
+        <span class="checkpoint-icon">✦</span>
+        <span class="checkpoint-text"><strong>Checkpoint S19:</strong> Visually inspect all 5 chart types with the synthetic mortality dataset from S10. Pay attention to the heatmap center — it must be at 1.0 (not the data mean) so over/under mortality reads correctly.</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- S20 -->
+  <div class="sprint">
+    <div class="sprint-header">
+      <span class="sprint-num">S20</span>
+      <span class="sprint-title">Audit Trail & Run Metadata</span>
+      <span class="sprint-tag tag-report">OUTPUT</span>
+    </div>
+    <div class="sprint-body">
+      <div class="sprint-grid">
+        <div class="s-section">
+          <div class="s-label">Claude Code Prompt</div>
+          <div class="prompt-box"><span class="kw">In lifexp/core/audit.py</span>:
+
+<span class="str">StudyRun</span> dataclass:
+  run_id: str           <span class="cmt"># UUID generated at run time</span>
+  timestamp: datetime
+  lifexp_version: str
+  python_version: str
+  study_type: str       <span class="cmt"># 'mortality', 'lapse', etc.</span>
+  parameters: dict      <span class="cmt"># all study parameters</span>
+  data_checksum: str    <span class="cmt"># MD5 of input dataset</span>
+  
+  .to_json(path: str)
+  .to_dict() -> dict
+
+<span class="kw">Decorator</span>: <span class="str">@audit_run</span>
+  Wrap any study .run() call to auto-capture:
+  - All constructor parameters
+  - Input data checksum
+  - Execution time
+  - Output summary stats
+  Save metadata alongside results
+
+<span class="str">compare_runs(run_a: StudyRun, run_b: StudyRun) -> dict</span>
+  <span class="cmt"># Shows what changed between two study runs:</span>
+  <span class="cmt"># parameter diffs, data checksum match, version diff</span>
+
+<span class="kw">Write tests</span> in tests/core/test_audit.py</div>
+        </div>
+        <div class="s-section">
+          <div class="s-label">Test Cases</div>
+          <div class="test-block">
+            <div class="test-case">
+              <div class="test-case-header"><span class="test-badge tb-normal">Normal</span><span class="test-name">Unique run_id each call</span></div>
+              <div class="test-desc">Run same study twice</div>
+              <div class="test-expect">→ Two different run_ids (UUIDs)</div>
+            </div>
+            <div class="test-case">
+              <div class="test-case-header"><span class="test-badge tb-normal">Normal</span><span class="test-name">Checksum changes with data change</span></div>
+              <div class="test-desc">Change one record, re-run</div>
+              <div class="test-expect">→ data_checksum differs between runs</div>
+            </div>
+            <div class="test-case">
+              <div class="test-case-header"><span class="test-badge tb-normal">Normal</span><span class="test-name">compare_runs detects param change</span></div>
+              <div class="test-desc">Run with lam=100, then lam=200</div>
+              <div class="test-expect">→ compare_runs shows 'lam' in parameter diffs</div>
+            </div>
+            <div class="test-case">
+              <div class="test-case-header"><span class="test-badge tb-normal">Normal</span><span class="test-name">JSON round-trip</span></div>
+              <div class="test-desc">to_json then reload and compare</div>
+              <div class="test-expect">→ Reloaded StudyRun equals original</div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="checkpoint">
+        <span class="checkpoint-icon">✦</span>
+        <span class="checkpoint-text"><strong>Checkpoint S20:</strong> The data checksum is the key regulatory feature — it lets you prove to an auditor that the same data produced the same result. Verify the checksum is deterministic: same data, same checksum across different machines.</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- S21 -->
+  <div class="sprint">
+    <div class="sprint-header">
+      <span class="sprint-num">S21</span>
+      <span class="sprint-title">Public API & CLI Interface</span>
+      <span class="sprint-tag tag-int">INTERFACE</span>
+    </div>
+    <div class="sprint-body">
+      <div class="sprint-grid">
+        <div class="s-section">
+          <div class="s-label">Claude Code Prompt</div>
+          <div class="prompt-box"><span class="kw">In lifexp/__init__.py</span>, expose clean public API:
+
+<span class="str">from lifexp import (
+    PolicyDataset, ClaimDataset, StudyPeriod,
+    MortalityStudy, LapseStudy, MorbidityStudy,
+    RIStudy, ExpenseStudy,
+    TableRegistry,
+    HTMLReport, ExcelReport
+)</span>
+
+<span class="kw">In lifexp/cli.py</span>, create a CLI using argparse or click:
+
+Commands:
+  <span class="str">lifexp mortality</span>  --data policies.csv --study-start 2020-01-01
+                    --study-end 2022-12-31 --table A_1967_70
+                    --output results/ --format html,excel
+  
+  <span class="str">lifexp lapse</span>      --data policies.csv --study-start ... --output ...
+  
+  <span class="str">lifexp tables</span>     --list
+  <span class="str">lifexp tables</span>     --register my_table.csv --name "RI_Table_2024"
+  
+  <span class="str">lifexp version</span>
+
+<span class="kw">All CLI commands</span> should:
+  - Accept --config YAML file as alternative to all flags
+  - Print progress (Loaded N records, Computing ETR, ...)
+  - Exit code 0 on success, 1 on error
+  - Write audit JSON alongside output
+
+<span class="kw">Write tests</span> in tests/test_cli.py using subprocess or click.testing</div>
+        </div>
+        <div class="s-section">
+          <div class="s-label">Test Cases</div>
+          <div class="test-block">
+            <div class="test-case">
+              <div class="test-case-header"><span class="test-badge tb-normal">Normal</span><span class="test-name">CLI mortality study end-to-end</span></div>
+              <div class="test-desc">Run CLI with synthetic CSV, check output files created</div>
+              <div class="test-expect">→ Exit code 0; HTML and Excel files in output dir</div>
+            </div>
+            <div class="test-case">
+              <div class="test-case-header"><span class="test-badge tb-normal">Normal</span><span class="test-name">lifexp version</span></div>
+              <div class="test-desc">Run <code>lifexp version</code></div>
+              <div class="test-expect">→ Prints "0.1.0"</div>
+            </div>
+            <div class="test-case">
+              <div class="test-case-header"><span class="test-badge tb-edge">Edge</span><span class="test-name">Missing required flag</span></div>
+              <div class="test-desc">Run <code>lifexp mortality</code> without --data</div>
+              <div class="test-expect">→ Exit code 1 with helpful error message</div>
+            </div>
+            <div class="test-case">
+              <div class="test-case-header"><span class="test-badge tb-edge">Edge</span><span class="test-name">Invalid date format</span></div>
+              <div class="test-desc">--study-start "2020/01/01" (wrong separator)</div>
+              <div class="test-expect">→ Clear error: "Expected YYYY-MM-DD format"</div>
+            </div>
+            <div class="test-case">
+              <div class="test-case-header"><span class="test-badge tb-normal">Normal</span><span class="test-name">YAML config file</span></div>
+              <div class="test-desc">Pass --config study.yaml with all parameters</div>
+              <div class="test-expect">→ Identical result to passing flags individually</div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="checkpoint">
+        <span class="checkpoint-icon">✦</span>
+        <span class="checkpoint-text"><strong>Checkpoint S21:</strong> The public API imports must all work from a fresh Python environment after <code>pip install -e .</code>. Test in a clean virtual environment — not your development environment — to catch missing dependencies.</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- S22 -->
+  <div class="sprint">
+    <div class="sprint-header">
+      <span class="sprint-num">S22</span>
+      <span class="sprint-title">Full End-to-End Integration Test</span>
+      <span class="sprint-tag tag-int">E2E</span>
+    </div>
+    <div class="sprint-body">
+      <div class="sprint-grid full">
+        <div class="s-section">
+          <div class="s-label">Claude Code Prompt</div>
+          <div class="prompt-box"><span class="kw">In tests/test_e2e.py</span>, build a comprehensive end-to-end test using
+a synthetic but realistic Sri Lankan life portfolio.
+
+<span class="str">Generate synthetic dataset</span> (tests/fixtures/generate_portfolio.py):
+  - 5,000 policies
+  - Issue dates spanning 2010–2022
+  - Mix of statuses: 70% IF, 15% LAPSED, 10% DEATH, 5% SURRENDERED
+  - Ages at issue: 20–65, normally distributed
+  - Products: ENDOW (40%), TERM (35%), WHOLELIFE (25%)
+  - Genders: 60% M, 40% F
+  - Mortality following A 1967-70 × 0.85 (15% lighter than standard)
+  - Lapse rates: 15% year 1, 8% year 2, 5% thereafter
+  - 500 associated claim records for morbidity testing
+
+<span class="str">End-to-end test must verify</span>:
+  1. PolicyDataset loads all 5,000 records with 0 validation errors
+  2. MortalityStudy.run() completes; overall_ae is between 0.70 and 1.00
+     (expected ~0.85 given generating assumption)
+  3. LapseStudy.run() year-1 lapse rate between 0.12 and 0.18
+  4. MorbidityStudy.run() completes without error
+  5. HTMLReport renders to file successfully
+  6. ExcelReport renders to file successfully
+  7. Audit JSON written and contains correct run_id
+  8. Total runtime < 30 seconds for full pipeline
+  9. All output DataFrames have no unexpected NaN values
+  10. compare_runs() detects a seeded parameter change correctly
+
+<span class="kw">This test must be runnable with</span>: <span class="str">pytest tests/test_e2e.py -v</span></div>
+        </div>
+      </div>
+
+      <div style="margin-top:20px;">
+        <div class="s-label">Edge Cases to Include in E2E Dataset</div>
+        <div class="test-block">
+          <div class="test-case">
+            <div class="test-case-header"><span class="test-badge tb-edge">Edge</span><span class="test-name">Policy issues on study start date</span></div>
+            <div class="test-expect">→ Full observation; no off-by-one in exposure</div>
+          </div>
+          <div class="test-case">
+            <div class="test-case-header"><span class="test-badge tb-edge">Edge</span><span class="test-name">Death on first day of study</span></div>
+            <div class="test-expect">→ Counted; initial ETR = 1.0 for that policy</div>
+          </div>
+          <div class="test-case">
+            <div class="test-case-header"><span class="test-badge tb-edge">Edge</span><span class="test-name">Centenarian-age policy (age 100+)</span></div>
+            <div class="test-expect">→ Age-out-of-range warning raised; policy excluded from A/E gracefully</div>
+          </div>
+          <div class="test-case">
+            <div class="test-case-header"><span class="test-badge tb-edge">Edge</span><span class="test-name">Feb 29 birthday in portfolio</span></div>
+            <div class="test-expect">→ No crash; anniversary handled as Feb 28 in non-leap years</div>
+          </div>
+          <div class="test-case">
+            <div class="test-case-header"><span class="test-badge tb-edge">Edge</span><span class="test-name">Sparse age cell (only 1 policy)</span></div>
+            <div class="test-expect">→ Credibility = near-zero; blended rate ≈ standard table rate</div>
+          </div>
+          <div class="test-case">
+            <div class="test-case-header"><span class="test-badge tb-edge">Edge</span><span class="test-name">All policies same product</span></div>
+            <div class="test-expect">→ group_by=['product_code'] produces 1 segment, not error</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="checkpoint">
+        <span class="checkpoint-icon">✦</span>
+        <span class="checkpoint-text"><strong>Checkpoint S22 — Final Gate:</strong> Run the full test suite one last time: <code>pytest tests/ -v --tb=short</code>. Target: 90+ tests, all green, runtime under 60 seconds total. If the E2E overall_ae is outside [0.70, 1.00], there is a systematic bug in the exposure or A/E calculation — do not release until resolved. Congratulations — lifeXP v0.1.0 is ready.</span>
+      </div>
+    </div>
+  </div>
+
+</div><!-- end phase 4 -->
+
+
+<footer>
+  <span>lifeXP Build Plan · 22 Sprints · 4 Phases · Claude Code TDD</span>
+  <span>Start each sprint by copying the prompt. Don't combine sprints.</span>
+</footer>
+
+</body>
+</html>

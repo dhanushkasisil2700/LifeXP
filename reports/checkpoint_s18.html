@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>LifeXP — Checkpoint S18 Inspection Report</title>
+<style>
+  body {
+    font-family: 'Segoe UI', Arial, sans-serif;
+    font-size: 14px;
+    line-height: 1.5;
+    color: #222;
+    margin: 2em auto;
+    max-width: 1100px;
+    padding: 0 1em;
+  }
+  h1 { color: #1a3a5c; border-bottom: 2px solid #1a3a5c; padding-bottom: .3em; }
+  h2 { color: #1a3a5c; margin-top: 1.8em; }
+  .metadata { background: #f0f4f8; border-left: 4px solid #1a3a5c;
+              padding: .6em 1em; margin-bottom: 1.5em; }
+  .metadata table { border: none; }
+  .metadata td { padding: 2px 8px; }
+  table.data { border-collapse: collapse; width: 100%; margin: 1em 0; }
+  table.data caption { font-weight: bold; text-align: left;
+                        margin-bottom: .4em; color: #444; }
+  table.data th { background: #1a3a5c; color: #fff; padding: 6px 10px;
+                  text-align: left; white-space: nowrap; }
+  table.data td { padding: 5px 10px; border-bottom: 1px solid #ddd; }
+  table.data tr:nth-child(even) td { background: #f7f9fb; }
+  table.data tr:hover td { background: #eaf1fb; }
+  .no-data { color: #888; font-style: italic; margin: .5em 0 1em; }
+  .formula-block { background: #fafafa; border: 1px solid #ddd;
+                   padding: .6em 1em; border-radius: 4px; margin: .8em 0; }
+  .summary-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+                  gap: .6em; margin: .8em 0; }
+  .stat-card { background: #f0f4f8; border-radius: 4px; padding: .5em .8em; }
+  .stat-label { font-size: 11px; color: #666; text-transform: uppercase; letter-spacing: .05em; }
+  .stat-value { font-size: 1.2em; font-weight: bold; color: #1a3a5c; }
+</style>
+<script>
+  window.MathJax = {
+    tex: { inlineMath: [['\\(', '\\)']], displayMath: [['$$', '$$']] },
+    startup: { typeset: true }
+  };
+</script>
+<script id="MathJax-script" async
+  src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js">
+</script>
+</head>
+<body>
+<h1>LifeXP — Checkpoint S18 Inspection Report</h1>
+<div class="metadata"><table><tr><td><strong>Period</strong></td><td>2020–2022</td></tr><tr><td><strong>Table used</strong></td><td>IA 2012</td></tr><tr><td><strong>Methodology</strong></td><td>Central Ledger</td></tr><tr><td><strong>Generated</strong></td><td>auto (pytest)</td></tr></table></div>
+<section>
+<h2>A/E by Age</h2>
+<div class="formula-block">
+A/E Ratio: $$\text{A/E} = \frac{\sum \text{Actual claims}}{\sum \text{Expected claims}}= \frac{\sum d_x}{\sum \hat{q}_x \cdot E_x^c}$$
+Central Exposed-to-Risk: \(\displaystyle E_x^c = \sum_{i} \frac{\text{days in study}}{365.25}\)
+</div>
+<table class="data"><thead><tr><th>age</th><th>deaths</th><th>etr</th><th>expected_ri_claims</th><th>actual_ri_claims</th><th>ae_ratio</th></tr></thead><tbody><tr><td>40.0000</td><td>17.0000</td><td>186.9133</td><td>1702.6225</td><td>2795.1233</td><td>0.8792</td></tr><tr><td>41.0000</td><td>13.0000</td><td>140.9954</td><td>4452.7157</td><td>5985.4917</td><td>1.0373</td></tr><tr><td>42.0000</td><td>10.0000</td><td>159.4245</td><td>3165.8449</td><td>5900.3438</td><td>1.4005</td></tr><tr><td>43.0000</td><td>6.0000</td><td>131.5437</td><td>2198.8476</td><td>4364.8183</td><td>1.4406</td></tr><tr><td>44.0000</td><td>6.0000</td><td>190.2609</td><td>2690.7489</td><td>4182.3882</td><td>0.9220</td></tr><tr><td>45.0000</td><td>1.0000</td><td>172.3780</td><td>1113.2787</td><td>4379.9230</td><td>1.1144</td></tr><tr><td>46.0000</td><td>2.0000</td><td>50.4108</td><td>1497.1331</td><td>2822.3914</td><td>0.8897</td></tr><tr><td>47.0000</td><td>1.0000</td><td>178.6106</td><td>3682.4977</td><td>1502.5018</td><td>1.1349</td></tr><tr><td>48.0000</td><td>4.0000</td><td>55.0378</td><td>3588.7580</td><td>4551.7394</td><td>0.9041</td></tr><tr><td>49.0000</td><td>16.0000</td><td>159.4483</td><td>3461.5404</td><td>3531.8425</td><td>0.9525</td></tr></tbody></table>
+</section>
+<section>
+<h2>Graduation Results</h2>
+<div class="formula-block">
+Initial exposed-to-risk: \(E_x = E_x^c + \tfrac{1}{2}\,d_x\)<br>Crude rate: \(\hat{q}_x = d_x / E_x\)
+</div>
+<h3>Crude Rates</h3>
+<table class="data"><caption>Crude mortality rates</caption><thead><tr><th>age</th><th>qx</th></tr></thead><tbody><tr><td>40.0000</td><td>0.0010</td></tr><tr><td>41.0000</td><td>0.0011</td></tr><tr><td>42.0000</td><td>0.0012</td></tr><tr><td>43.0000</td><td>0.0013</td></tr><tr><td>44.0000</td><td>0.0014</td></tr><tr><td>45.0000</td><td>0.0015</td></tr><tr><td>46.0000</td><td>0.0016</td></tr><tr><td>47.0000</td><td>0.0017</td></tr><tr><td>48.0000</td><td>0.0018</td></tr><tr><td>49.0000</td><td>0.0019</td></tr></tbody></table>
+<h3>Graduated Rates</h3>
+<table class="data"><caption>Graduated mortality rates</caption><thead><tr><th>age</th><th>qx</th></tr></thead><tbody><tr><td>40.0000</td><td>0.0010</td></tr><tr><td>41.0000</td><td>0.0011</td></tr><tr><td>42.0000</td><td>0.0012</td></tr><tr><td>43.0000</td><td>0.0013</td></tr><tr><td>44.0000</td><td>0.0014</td></tr><tr><td>45.0000</td><td>0.0015</td></tr><tr><td>46.0000</td><td>0.0016</td></tr><tr><td>47.0000</td><td>0.0017</td></tr><tr><td>48.0000</td><td>0.0018</td></tr><tr><td>49.0000</td><td>0.0019</td></tr></tbody></table>
+</section>
+<section>
+<h2>Summary Statistics</h2>
+<div class="formula-block">
+Credibility-weighted rate: \(q_x^* = Z \hat{q}_x + (1-Z) q_x^{\text{std}}\)<br>Bühlmann credibility factor: \(Z = n / (n + k)\) where \(k = \sigma^2 / \tau^2\)
+</div>
+<div class="summary-grid">
+<div class="stat-card"><div class="stat-label">Overall A/E</div><div class="stat-value">1.05</div></div>
+<div class="stat-card"><div class="stat-label">Total deaths</div><div class="stat-value">183</div></div>
+<div class="stat-card"><div class="stat-label">Total ETR</div><div class="stat-value">12 450</div></div>
+<div class="stat-card"><div class="stat-label">Credibility Z</div><div class="stat-value">0.87</div></div>
+</div></section>
+</body>
+</html>

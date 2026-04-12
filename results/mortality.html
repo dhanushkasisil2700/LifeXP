@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Mortality Study</title>
+<style>
+  body {
+    font-family: 'Segoe UI', Arial, sans-serif;
+    font-size: 14px;
+    line-height: 1.5;
+    color: #222;
+    margin: 2em auto;
+    max-width: 1100px;
+    padding: 0 1em;
+  }
+  h1 { color: #1a3a5c; border-bottom: 2px solid #1a3a5c; padding-bottom: .3em; }
+  h2 { color: #1a3a5c; margin-top: 1.8em; }
+  .metadata { background: #f0f4f8; border-left: 4px solid #1a3a5c;
+              padding: .6em 1em; margin-bottom: 1.5em; }
+  .metadata table { border: none; }
+  .metadata td { padding: 2px 8px; }
+  table.data { border-collapse: collapse; width: 100%; margin: 1em 0; }
+  table.data caption { font-weight: bold; text-align: left;
+                        margin-bottom: .4em; color: #444; }
+  table.data th { background: #1a3a5c; color: #fff; padding: 6px 10px;
+                  text-align: left; white-space: nowrap; }
+  table.data td { padding: 5px 10px; border-bottom: 1px solid #ddd; }
+  table.data tr:nth-child(even) td { background: #f7f9fb; }
+  table.data tr:hover td { background: #eaf1fb; }
+  .no-data { color: #888; font-style: italic; margin: .5em 0 1em; }
+  .formula-block { background: #fafafa; border: 1px solid #ddd;
+                   padding: .6em 1em; border-radius: 4px; margin: .8em 0; }
+  .summary-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+                  gap: .6em; margin: .8em 0; }
+  .stat-card { background: #f0f4f8; border-radius: 4px; padding: .5em .8em; }
+  .stat-label { font-size: 11px; color: #666; text-transform: uppercase; letter-spacing: .05em; }
+  .stat-value { font-size: 1.2em; font-weight: bold; color: #1a3a5c; }
+</style>
+<script>
+  window.MathJax = {
+    tex: { inlineMath: [['\\(', '\\)']], displayMath: [['$$', '$$']] },
+    startup: { typeset: true }
+  };
+</script>
+<script id="MathJax-script" async
+  src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js">
+</script>
+</head>
+<body>
+<h1>Mortality Study</h1>
+
+<section>
+<h2>Mortality Study</h2>
+<div class="formula-block">
+A/E Ratio: $$\text{A/E} = \frac{\sum \text{Actual claims}}{\sum \text{Expected claims}}= \frac{\sum d_x}{\sum \hat{q}_x \cdot E_x^c}$$
+Central Exposed-to-Risk: \(\displaystyle E_x^c = \sum_{i} \frac{\text{days in study}}{365.25}\)
+</div>
+<table class="data"><thead><tr><th>age</th><th>central_etr</th><th>initial_etr</th><th>deaths</th><th>expected_deaths</th><th>standard_rate</th><th>crude_central_rate</th><th>crude_initial_rate</th><th>ae_ratio</th><th>ae_central</th><th>ae_initial</th></tr></thead><tbody><tr><td>47.0000</td><td>20.4408</td><td>20.9863</td><td>1.0000</td><td>0.0670</td><td>0.0033</td><td>0.0489</td><td>0.0477</td><td>14.9152</td><td>14.9152</td><td>14.5275</td></tr></tbody></table>
+</section>
+</body>
+</html>

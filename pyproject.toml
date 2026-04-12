@@ -1,0 +1,81 @@
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "lifexp"
+version = "0.1.0"
+description = "Actuarial life experience analysis toolkit for mortality, lapse, morbidity, reinsurance, expense, graduation, and reporting."
+readme = "README.md"
+license = { text = "MIT" }
+requires-python = ">=3.9"
+authors = [
+    { name = "W M Dhanushka S B Wijekoon", email = "dhanushkasisil@outlook.com" },
+]
+keywords = [
+    "actuarial",
+    "life insurance",
+    "experience study",
+    "mortality",
+    "lapse",
+    "morbidity",
+    "graduation",
+    "exposed-to-risk",
+]
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Intended Audience :: Financial and Insurance Industry",
+    "Intended Audience :: Science/Research",
+    "License :: OSI Approved :: MIT License",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Topic :: Office/Business :: Financial",
+    "Topic :: Scientific/Engineering :: Mathematics",
+    "Operating System :: OS Independent",
+]
+dependencies = [
+    "pandas>=1.5",
+    "numpy>=1.23",
+    "scipy>=1.9",
+    "matplotlib>=3.6",
+    "seaborn>=0.12",
+    "openpyxl>=3.0",
+    "click>=8.0",
+    "pyyaml>=6.0",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=7.0",
+    "pytest-cov",
+]
+docs = [
+    "sphinx",
+    "sphinx-rtd-theme",
+    "numpydoc",
+]
+
+[project.urls]
+"Homepage"    = "https://github.com/dhanushkasisil/lifexp"
+"Bug Tracker" = "https://github.com/dhanushkasisil/lifexp/issues"
+"LinkedIn"    = "https://lk.linkedin.com/in/dhanushkasisil"
+
+[project.scripts]
+lifexp = "lifexp.cli:main"
+
+[tool.setuptools.packages.find]
+where = ["."]
+include = ["lifexp*"]
+
+[tool.setuptools.package-data]
+"lifexp" = ["datasets/*.csv"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+python_files = ["test_*.py"]
+python_classes = ["Test*"]
+python_functions = ["test_*"]
+addopts = "-ra -q"
