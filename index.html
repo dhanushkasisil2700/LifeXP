@@ -1,0 +1,1214 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>lifexp - Actuarial Life Experience Analysis Toolkit</title>
+  <meta name="description" content="lifexp is an open-source Python toolkit for actuarial life experience studies: mortality, lapse, morbidity, reinsurance, expense, graduation, and reporting." />
+  <meta name="author" content="W M Dhanushka S B Wijekoon" />
+
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+
+  <!-- Syntax highlighting -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/atom-one-dark.min.css" />
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/python.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/bash.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/yaml.min.js"></script>
+
+  <!-- MathJax -->
+  <script>window.MathJax = { tex: { inlineMath: [["$","$"]] }, options: { skipHtmlTags: ["script","noscript","style","textarea"] } };</script>
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js" async></script>
+
+  <style>
+    /* ── Reset & base ────────────────────────────────────────── */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; font-size: 16px; }
+    body { font-family: "Inter", sans-serif; background: #f8f9fb; color: #1a1a2e; line-height: 1.7; }
+
+    /* ── CSS variables ───────────────────────────────────────── */
+    :root {
+      --navy:   #1A3A5C;
+      --blue:   #2563EB;
+      --teal:   #0D9488;
+      --gold:   #D97706;
+      --red:    #DC2626;
+      --green:  #16A34A;
+      --bg:     #F8F9FB;
+      --card:   #FFFFFF;
+      --border: #E2E8F0;
+      --text:   #1E293B;
+      --muted:  #64748B;
+      --code-bg:#1E2433;
+      --radius: 10px;
+      --shadow: 0 4px 24px rgba(26,58,92,.08);
+      --shadow-lg: 0 12px 40px rgba(26,58,92,.14);
+    }
+
+    /* ── Scrollbar ───────────────────────────────────────────── */
+    ::-webkit-scrollbar { width: 7px; } ::-webkit-scrollbar-track { background: #eee; }
+    ::-webkit-scrollbar-thumb { background: var(--navy); border-radius: 4px; }
+
+    /* ── Nav ─────────────────────────────────────────────────── */
+    nav {
+      position: sticky; top: 0; z-index: 100;
+      background: var(--navy); color: #fff;
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 0 2rem; height: 60px;
+      box-shadow: 0 2px 12px rgba(0,0,0,.2);
+    }
+    .nav-brand { font-size: 1.25rem; font-weight: 700; letter-spacing: .5px; color: #fff; text-decoration: none; }
+    .nav-brand span { color: #60A5FA; }
+    .nav-links { display: flex; gap: 1.5rem; list-style: none; }
+    .nav-links a { color: #CBD5E1; text-decoration: none; font-size: .88rem; font-weight: 500; transition: color .2s; }
+    .nav-links a:hover { color: #fff; }
+    .nav-badge {
+      background: var(--teal); color: #fff; font-size: .75rem; font-weight: 600;
+      padding: 2px 10px; border-radius: 20px; margin-left: .5rem;
+    }
+
+    /* ── Hero ────────────────────────────────────────────────── */
+    .hero {
+      background: linear-gradient(135deg, #0F2444 0%, #1A3A5C 50%, #1E4976 100%);
+      color: #fff; text-align: center; padding: 6rem 2rem 5rem;
+      position: relative; overflow: hidden;
+    }
+    .hero::before {
+      content: ""; position: absolute; inset: 0;
+      background: radial-gradient(ellipse at 70% 50%, rgba(37,99,235,.25) 0%, transparent 65%);
+    }
+    .hero-inner { position: relative; max-width: 820px; margin: 0 auto; }
+    .hero-badge {
+      display: inline-block; background: rgba(96,165,250,.15); border: 1px solid rgba(96,165,250,.35);
+      color: #93C5FD; font-size: .8rem; font-weight: 600; letter-spacing: 1px;
+      padding: 4px 14px; border-radius: 20px; margin-bottom: 1.5rem; text-transform: uppercase;
+    }
+    .hero h1 { font-size: clamp(2.2rem, 5vw, 3.4rem); font-weight: 700; line-height: 1.15; margin-bottom: 1.2rem; }
+    .hero h1 span { color: #60A5FA; }
+    .hero p { font-size: 1.15rem; color: #CBD5E1; max-width: 620px; margin: 0 auto 2.5rem; }
+    .hero-buttons { display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap; }
+    .btn {
+      display: inline-flex; align-items: center; gap: .5rem;
+      padding: .7rem 1.6rem; border-radius: 8px; font-weight: 600;
+      font-size: .95rem; text-decoration: none; transition: all .2s;
+    }
+    .btn-primary { background: var(--blue); color: #fff; }
+    .btn-primary:hover { background: #1D4ED8; transform: translateY(-1px); box-shadow: 0 6px 20px rgba(37,99,235,.4); }
+    .btn-outline { background: transparent; color: #fff; border: 2px solid rgba(255,255,255,.35); }
+    .btn-outline:hover { background: rgba(255,255,255,.1); border-color: #fff; }
+    .hero-stats {
+      display: flex; justify-content: center; gap: 3rem; margin-top: 3.5rem;
+      flex-wrap: wrap;
+    }
+    .hero-stat { text-align: center; }
+    .hero-stat-value { font-size: 2rem; font-weight: 700; color: #60A5FA; }
+    .hero-stat-label { font-size: .82rem; color: #94A3B8; text-transform: uppercase; letter-spacing: .8px; margin-top: .2rem; }
+
+    /* ── Layout ──────────────────────────────────────────────── */
+    .container { max-width: 1100px; margin: 0 auto; padding: 0 2rem; }
+    section { padding: 5rem 0; }
+    section:nth-child(even) { background: #fff; }
+    .section-label { font-size: .78rem; font-weight: 700; letter-spacing: 1.5px; color: var(--teal); text-transform: uppercase; margin-bottom: .6rem; }
+    .section-title { font-size: clamp(1.6rem, 3vw, 2.2rem); font-weight: 700; color: var(--navy); margin-bottom: .8rem; }
+    .section-desc { font-size: 1.05rem; color: var(--muted); max-width: 680px; }
+
+    /* ── Cards ───────────────────────────────────────────────── */
+    .card-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 1.5rem; margin-top: 2.5rem; }
+    .card {
+      background: var(--card); border: 1px solid var(--border);
+      border-radius: var(--radius); padding: 1.75rem; box-shadow: var(--shadow);
+      transition: transform .2s, box-shadow .2s;
+    }
+    .card:hover { transform: translateY(-3px); box-shadow: var(--shadow-lg); }
+    .card-icon { font-size: 2rem; margin-bottom: 1rem; }
+    .card h3 { font-size: 1.05rem; font-weight: 700; color: var(--navy); margin-bottom: .5rem; }
+    .card p { font-size: .9rem; color: var(--muted); }
+    .card-tag {
+      display: inline-block; font-size: .72rem; font-weight: 600; padding: 2px 9px;
+      border-radius: 12px; margin-top: .75rem;
+    }
+    .tag-blue   { background: #EFF6FF; color: var(--blue); }
+    .tag-teal   { background: #F0FDFA; color: var(--teal); }
+    .tag-gold   { background: #FFFBEB; color: var(--gold); }
+    .tag-green  { background: #F0FDF4; color: var(--green); }
+    .tag-red    { background: #FEF2F2; color: var(--red); }
+    .tag-purple { background: #FAF5FF; color: #7C3AED; }
+
+    /* ── Code blocks ─────────────────────────────────────────── */
+    .code-block { margin: 1.75rem 0; border-radius: var(--radius); overflow: hidden; box-shadow: var(--shadow); }
+    .code-header {
+      background: #161B27; display: flex; align-items: center; justify-content: space-between;
+      padding: .55rem 1rem; font-size: .78rem; color: #6B7280;
+    }
+    .code-header .lang { color: #60A5FA; font-weight: 600; font-family: "JetBrains Mono", monospace; }
+    .code-header .dots span {
+      display: inline-block; width: 11px; height: 11px; border-radius: 50%; margin-right: 5px;
+    }
+    .dot-red   { background: #EF4444; } .dot-yellow { background: #F59E0B; } .dot-green { background: #10B981; }
+    pre { margin: 0 !important; border-radius: 0 !important; }
+    pre code { font-family: "JetBrains Mono", monospace !important; font-size: .85rem !important; line-height: 1.65 !important; }
+
+    /* ── Feature table ───────────────────────────────────────── */
+    .feat-table { width: 100%; border-collapse: collapse; margin-top: 2rem; font-size: .9rem; }
+    .feat-table th { background: var(--navy); color: #fff; padding: .75rem 1rem; text-align: left; font-weight: 600; }
+    .feat-table td { padding: .7rem 1rem; border-bottom: 1px solid var(--border); color: var(--text); }
+    .feat-table tr:nth-child(even) td { background: #F8FAFC; }
+    .feat-table tr:hover td { background: #EFF6FF; }
+    .feat-table code { background: #EFF6FF; color: var(--blue); padding: 1px 6px; border-radius: 4px; font-family: "JetBrains Mono", monospace; font-size: .82rem; }
+
+    /* ── Steps ───────────────────────────────────────────────── */
+    .steps { counter-reset: step; margin-top: 2rem; }
+    .step { display: flex; gap: 1.5rem; margin-bottom: 2.5rem; }
+    .step-num {
+      counter-increment: step; flex-shrink: 0;
+      width: 42px; height: 42px; border-radius: 50%;
+      background: var(--navy); color: #fff; font-weight: 700; font-size: 1.05rem;
+      display: flex; align-items: center; justify-content: center;
+    }
+    .step-body h4 { font-size: 1rem; font-weight: 700; color: var(--navy); margin-bottom: .3rem; }
+    .step-body p  { font-size: .92rem; color: var(--muted); }
+
+    /* ── Inline code ─────────────────────────────────────────── */
+    code { background: #EFF6FF; color: #1E40AF; padding: 1px 6px; border-radius: 4px; font-family: "JetBrains Mono", monospace; font-size: .85em; }
+
+    /* ── API reference ───────────────────────────────────────── */
+    .api-block { border: 1px solid var(--border); border-radius: var(--radius); margin-bottom: 2rem; overflow: hidden; }
+    .api-header { background: #F1F5F9; padding: 1rem 1.5rem; display: flex; align-items: center; gap: 1rem; }
+    .api-name { font-family: "JetBrains Mono", monospace; font-size: 1.05rem; font-weight: 700; color: var(--navy); }
+    .api-kind { font-size: .72rem; font-weight: 700; padding: 2px 9px; border-radius: 12px; }
+    .kind-class  { background: #DBEAFE; color: #1D4ED8; }
+    .kind-method { background: #D1FAE5; color: #065F46; }
+    .kind-func   { background: #FEF3C7; color: #92400E; }
+    .api-body { padding: 1.25rem 1.5rem; }
+    .api-desc { font-size: .93rem; color: var(--muted); margin-bottom: 1rem; }
+    .api-params { font-size: .88rem; }
+    .api-params dt { font-family: "JetBrains Mono", monospace; color: var(--blue); font-weight: 600; margin-top: .5rem; }
+    .api-params dd { color: var(--muted); margin-left: 1.2rem; }
+
+    /* ── Tabs ────────────────────────────────────────────────── */
+    .tabs { display: flex; gap: .5rem; margin-bottom: -1px; flex-wrap: wrap; }
+    .tab-btn {
+      padding: .5rem 1.2rem; border: 1px solid var(--border); border-bottom: none;
+      border-radius: 8px 8px 0 0; background: #F1F5F9; cursor: pointer;
+      font-size: .88rem; font-weight: 600; color: var(--muted); transition: all .15s;
+    }
+    .tab-btn.active { background: var(--navy); color: #fff; border-color: var(--navy); }
+    .tab-content { display: none; border: 1px solid var(--border); border-radius: 0 var(--radius) var(--radius) var(--radius); }
+    .tab-content.active { display: block; }
+
+    /* ── Formula box ─────────────────────────────────────────── */
+    .formula-box {
+      background: #F8FAFF; border: 1px solid #BFDBFE; border-left: 4px solid var(--blue);
+      border-radius: var(--radius); padding: 1.5rem 2rem; margin: 1.5rem 0; text-align: center;
+    }
+    .formula-box .formula-title { font-size: .78rem; font-weight: 700; color: var(--blue); text-transform: uppercase; letter-spacing: 1px; margin-bottom: .75rem; }
+
+    /* ── Alert ───────────────────────────────────────────────── */
+    .alert { display: flex; gap: .9rem; padding: 1rem 1.25rem; border-radius: var(--radius); margin: 1.25rem 0; font-size: .9rem; }
+    .alert-info    { background: #EFF6FF; border: 1px solid #BFDBFE; color: #1E40AF; }
+    .alert-tip     { background: #F0FDF4; border: 1px solid #BBF7D0; color: #14532D; }
+    .alert-warn    { background: #FFFBEB; border: 1px solid #FDE68A; color: #78350F; }
+    .alert-icon    { font-size: 1.15rem; flex-shrink: 0; }
+
+    /* ── Output table ────────────────────────────────────────── */
+    .output-table { width: 100%; border-collapse: collapse; font-size: .88rem; margin: 1.25rem 0; }
+    .output-table th { background: #0F2444; color: #fff; padding: .6rem 1rem; text-align: left; }
+    .output-table td { padding: .6rem 1rem; border-bottom: 1px solid var(--border); font-family: "JetBrains Mono", monospace; color: var(--text); }
+    .output-table tr:nth-child(even) td { background: #F8FAFC; }
+
+    /* ── Author card ─────────────────────────────────────────── */
+    .author-card {
+      background: linear-gradient(135deg, #0F2444, #1A3A5C);
+      color: #fff; border-radius: 16px; padding: 2.5rem 3rem;
+      display: flex; gap: 2.5rem; align-items: center; flex-wrap: wrap;
+    }
+    .author-avatar {
+      width: 90px; height: 90px; border-radius: 50%;
+      background: linear-gradient(135deg, #2563EB, #0D9488);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 2.2rem; font-weight: 700; color: #fff; flex-shrink: 0;
+    }
+    .author-info h3 { font-size: 1.3rem; font-weight: 700; margin-bottom: .2rem; }
+    .author-info .role { color: #93C5FD; font-size: .95rem; margin-bottom: 1rem; }
+    .author-links { display: flex; gap: 1rem; flex-wrap: wrap; }
+    .author-link {
+      display: inline-flex; align-items: center; gap: .4rem;
+      background: rgba(255,255,255,.1); border: 1px solid rgba(255,255,255,.2);
+      color: #fff; text-decoration: none; padding: .4rem .9rem; border-radius: 6px;
+      font-size: .85rem; font-weight: 500; transition: all .2s;
+    }
+    .author-link:hover { background: rgba(255,255,255,.2); }
+
+    /* ── Footer ──────────────────────────────────────────────── */
+    footer {
+      background: #0F1E30; color: #94A3B8; text-align: center;
+      padding: 2.5rem; font-size: .88rem;
+    }
+    footer a { color: #60A5FA; text-decoration: none; }
+    footer a:hover { text-decoration: underline; }
+
+    /* ── Misc ────────────────────────────────────────────────── */
+    h2 { font-size: 1.6rem; font-weight: 700; color: var(--navy); margin: 2rem 0 1rem; }
+    h3 { font-size: 1.15rem; font-weight: 700; color: var(--navy); margin: 1.5rem 0 .6rem; }
+    p  { margin-bottom: 1rem; }
+    ul, ol { padding-left: 1.4rem; margin-bottom: 1rem; }
+    li { margin-bottom: .4rem; font-size: .95rem; color: var(--text); }
+    .pill { display: inline-block; padding: 2px 10px; border-radius: 20px; font-size: .75rem; font-weight: 700; }
+    .divider { border: none; border-top: 1px solid var(--border); margin: 2rem 0; }
+
+    @media (max-width: 768px) {
+      .nav-links { display: none; }
+      .hero h1 { font-size: 2rem; }
+      .author-card { flex-direction: column; align-items: flex-start; }
+      .hero-stats { gap: 1.5rem; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- ══════════════════════════════════════════════════════════════════
+     NAVIGATION
+══════════════════════════════════════════════════════════════════ -->
+<nav>
+  <a class="nav-brand" href="#"><span>life</span>exp</a>
+  <ul class="nav-links">
+    <li><a href="#features">Features</a></li>
+    <li><a href="#install">Install</a></li>
+    <li><a href="#quickstart">Quick Start</a></li>
+    <li><a href="#api">API Reference</a></li>
+    <li><a href="#cli">CLI</a></li>
+    <li><a href="#examples">Examples</a></li>
+    <li><a href="#author">Author</a></li>
+    <li><a href="https://pypi.org/project/lifexp/" target="_blank">PyPI <span class="nav-badge">v0.1.0</span></a></li>
+  </ul>
+</nav>
+
+<!-- ══════════════════════════════════════════════════════════════════
+     HERO
+══════════════════════════════════════════════════════════════════ -->
+<div class="hero">
+  <div class="hero-inner">
+    <div class="hero-badge">Open Source &mdash; MIT License</div>
+    <h1>Actuarial Life Experience Analysis<br /><span>Made Simple with Python</span></h1>
+    <p>
+      <strong>lifexp</strong> is a full-stack actuarial toolkit covering mortality, lapse, morbidity,
+      reinsurance, expense studies, graduation, and professional report generation &mdash;
+      designed for emerging-market life portfolios.
+    </p>
+    <div class="hero-buttons">
+      <a class="btn btn-primary" href="#quickstart">&#9654; Get Started</a>
+      <a class="btn btn-outline" href="https://pypi.org/project/lifexp/" target="_blank">&#8599; PyPI Package</a>
+      <a class="btn btn-outline" href="https://github.com/dhanushkasisil/lifexp" target="_blank">&#9641; GitHub</a>
+    </div>
+    <div class="hero-stats">
+      <div class="hero-stat"><div class="hero-stat-value">439</div><div class="hero-stat-label">Unit Tests</div></div>
+      <div class="hero-stat"><div class="hero-stat-value">6</div><div class="hero-stat-label">Study Types</div></div>
+      <div class="hero-stat"><div class="hero-stat-value">5</div><div class="hero-stat-label">Chart Types</div></div>
+      <div class="hero-stat"><div class="hero-stat-value">0.1.0</div><div class="hero-stat-label">Latest Release</div></div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════════════════════════
+     FEATURES
+══════════════════════════════════════════════════════════════════ -->
+<section id="features">
+  <div class="container">
+    <div class="section-label">What&rsquo;s Included</div>
+    <h1 class="section-title">All the tools an actuary needs</h1>
+    <p class="section-desc">
+      From raw CSV data to regulator-ready reports &mdash; <code>lifexp</code> covers the full
+      actuarial experience study pipeline in one coherent package.
+    </p>
+
+    <div class="card-grid">
+      <div class="card">
+        <div class="card-icon">&#128200;</div>
+        <h3>Mortality Study</h3>
+        <p>Central &amp; initial ETR, A/E ratios, Garwood confidence intervals, Whittaker graduation. Supports multiple age bases and group-by segmentation.</p>
+        <span class="card-tag tag-blue">MortalityStudy</span>
+      </div>
+      <div class="card">
+        <div class="card-icon">&#128683;</div>
+        <h3>Lapse Study</h3>
+        <p>Policy-year lapse and surrender rates, exposure by duration, year-on-year trend analysis. Identifies withdrawal patterns by product and channel.</p>
+        <span class="card-tag tag-teal">LapseStudy</span>
+      </div>
+      <div class="card">
+        <div class="card-icon">&#127973;</div>
+        <h3>Morbidity Study</h3>
+        <p>Incidence and termination rates using the dual exposed-to-risk (healthy/sick) method. Multi-state model support for complex benefit structures.</p>
+        <span class="card-tag tag-gold">MorbidityStudy</span>
+      </div>
+      <div class="card">
+        <div class="card-icon">&#128722;</div>
+        <h3>Reinsurance Study</h3>
+        <p>Ceded vs. retained exposure split, RI-adjusted A/E ratios, and treaty-level summaries for treaty review and pricing support.</p>
+        <span class="card-tag tag-purple">RIStudy</span>
+      </div>
+      <div class="card">
+        <div class="card-icon">&#128181;</div>
+        <h3>Expense Study</h3>
+        <p>Per-policy and per-new-business unit costs, year-on-year inflation analysis, and A/E vs. expense assumptions. Includes commission anomaly detection.</p>
+        <span class="card-tag tag-green">ExpenseStudy</span>
+      </div>
+      <div class="card">
+        <div class="card-icon">&#128200;</div>
+        <h3>Graduation</h3>
+        <p>Whittaker-Henderson 1D &amp; 2D, cubic splines, Makeham/Gompertz parametric fitting. Diagnostics: chi-squared, sign test, serial correlation.</p>
+        <span class="card-tag tag-red">graduation</span>
+      </div>
+      <div class="card">
+        <div class="card-icon">&#128196;</div>
+        <h3>HTML &amp; Excel Reports</h3>
+        <p>Self-contained HTML with embedded MathJax formulae. Multi-sheet Excel with bold headers and conditional A/E formatting (red &gt;1.2, green &lt;0.8).</p>
+        <span class="card-tag tag-blue">HTMLReport · ExcelReport</span>
+      </div>
+      <div class="card">
+        <div class="card-icon">&#128202;</div>
+        <h3>5 Chart Types</h3>
+        <p>A/E bar chart, crude vs. graduated rates, A/E heatmap (center=1.0), survival curve, in-force funnel. All return matplotlib Figure objects.</p>
+        <span class="card-tag tag-teal">charts</span>
+      </div>
+      <div class="card">
+        <div class="card-icon">&#128274;</div>
+        <h3>Audit Trail</h3>
+        <p>MD5 data checksum (order-independent), StudyRun dataclass, JSON serialisation, compare_runs() for regulatory change detection between study runs.</p>
+        <span class="card-tag tag-gold">audit</span>
+      </div>
+    </div>
+
+    <!-- Methods table -->
+    <h2>Actuarial Methods</h2>
+    <table class="feat-table">
+      <thead><tr><th>Category</th><th>Method / Feature</th><th>Class / Function</th></tr></thead>
+      <tbody>
+        <tr><td>Exposure</td><td>Central exposed-to-risk (force of mortality basis)</td><td><code>central_etr()</code></td></tr>
+        <tr><td>Exposure</td><td>Initial exposed-to-risk (annual probability basis)</td><td><code>initial_etr()</code></td></tr>
+        <tr><td>Age basis</td><td>Last birthday, next birthday, nearest birthday</td><td><code>AgeBasis</code></td></tr>
+        <tr><td>Confidence intervals</td><td>Garwood exact Poisson at any level</td><td><code>results.confidence_interval()</code></td></tr>
+        <tr><td>Graduation</td><td>Whittaker-Henderson 1D (age curve)</td><td><code>whittaker_1d()</code></td></tr>
+        <tr><td>Graduation</td><td>Whittaker-Henderson 2D (age × duration surface)</td><td><code>whittaker_2d()</code></td></tr>
+        <tr><td>Graduation</td><td>Cubic spline</td><td><code>spline_graduate()</code></td></tr>
+        <tr><td>Graduation</td><td>Makeham, Gompertz parametric fitting</td><td><code>fit_makeham(), fit_gompertz()</code></td></tr>
+        <tr><td>Diagnostics</td><td>Chi-squared goodness-of-fit</td><td><code>chi_squared_test()</code></td></tr>
+        <tr><td>Diagnostics</td><td>Sign test, runs test, serial correlation</td><td><code>graduation.diagnostics</code></td></tr>
+        <tr><td>Credibility</td><td>Classical &amp; B&uuml;hlmann-Straub</td><td><code>credibility</code></td></tr>
+        <tr><td>Mortality projection</td><td>Lee-Carter style future projection</td><td><code>mortality.projection</code></td></tr>
+        <tr><td>Anomaly detection</td><td>Z-score, MAD, IQR, ensemble voting</td><td><code>CommissionStudy.flag_anomalies()</code></td></tr>
+        <tr><td>Standard tables</td><td>A 1967-70 (built-in), custom CSV tables</td><td><code>TableRegistry</code></td></tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════════════════════════════════
+     INSTALLATION
+══════════════════════════════════════════════════════════════════ -->
+<section id="install">
+  <div class="container">
+    <div class="section-label">Getting Started</div>
+    <h1 class="section-title">Installation</h1>
+    <p class="section-desc">lifexp requires Python 3.9 or later. Install from PyPI in seconds.</p>
+
+    <div class="steps">
+      <div class="step">
+        <div class="step-num"></div>
+        <div class="step-body">
+          <h4>Install via pip</h4>
+          <p>The simplest way. All dependencies are pulled automatically.</p>
+          <div class="code-block">
+            <div class="code-header"><span class="dots"><span class="dot-red"></span><span class="dot-yellow"></span><span class="dot-green"></span></span><span class="lang">bash</span></div>
+            <pre><code class="language-bash">pip install lifexp</code></pre>
+          </div>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num"></div>
+        <div class="step-body">
+          <h4>Or install from source</h4>
+          <p>Clone the repository and install in editable mode for development.</p>
+          <div class="code-block">
+            <div class="code-header"><span class="dots"><span class="dot-red"></span><span class="dot-yellow"></span><span class="dot-green"></span></span><span class="lang">bash</span></div>
+            <pre><code class="language-bash">git clone https://github.com/dhanushkasisil/lifexp.git
+cd lifexp
+pip install -e .[dev]</code></pre>
+          </div>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num"></div>
+        <div class="step-body">
+          <h4>Verify installation</h4>
+          <p>Check that the package imported correctly and the CLI is available.</p>
+          <div class="code-block">
+            <div class="code-header"><span class="dots"><span class="dot-red"></span><span class="dot-yellow"></span><span class="dot-green"></span></span><span class="lang">bash</span></div>
+            <pre><code class="language-bash">python -c "import lifexp; print(lifexp.__version__)"
+lifexp version</code></pre>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="alert alert-info">
+      <span class="alert-icon">&#8505;</span>
+      <div>Dependencies installed automatically: <code>pandas &ge;1.5</code>, <code>numpy &ge;1.23</code>, <code>scipy &ge;1.9</code>, <code>matplotlib &ge;3.6</code>, <code>seaborn &ge;0.12</code>, <code>openpyxl &ge;3.0</code>, <code>click &ge;8.0</code>, <code>pyyaml &ge;6.0</code></div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════════════════════════════════
+     QUICK START
+══════════════════════════════════════════════════════════════════ -->
+<section id="quickstart">
+  <div class="container">
+    <div class="section-label">Tutorial</div>
+    <h1 class="section-title">Quick Start</h1>
+    <p class="section-desc">Run a complete mortality experience study in under 20 lines of code.</p>
+
+    <div class="code-block">
+      <div class="code-header"><span class="dots"><span class="dot-red"></span><span class="dot-yellow"></span><span class="dot-green"></span></span><span class="lang">python</span></div>
+      <pre><code class="language-python">import pandas as pd
+from datetime import date
+from lifexp import PolicyDataset, StudyPeriod, MortalityStudy, HTMLReport, ExcelReport
+
+# 1. Load your policy data from CSV
+df = pd.read_csv("policies.csv")
+dataset = PolicyDataset.from_dataframe(df)
+
+# 2. Define the observation window
+study = StudyPeriod(date(2018, 1, 1), date(2022, 12, 31))
+
+# 3. Run the mortality experience study
+ms = MortalityStudy(dataset, study, standard_table="A_1967_70")
+results = ms.run()
+
+# 4. Print key results
+print(f"Overall A/E ratio : {results.overall_ae:.4f}")
+print(f"Total deaths      : {results.total_deaths:.0f}")
+print(f"Total ETR (years) : {results.total_etr:.1f}")
+print(results.ae_by_age())
+
+# 5. Export reports
+html = HTMLReport("Mortality Study 2018-2022", {})
+html.add_ae_table(results.summary_df, caption="A/E by Age")
+html.render("output/mortality.html")
+
+xl = ExcelReport()
+xl.add_ae_sheet(results.summary_df, sheet_name="Mortality A/E")
+xl.render("output/mortality.xlsx")</code></pre>
+    </div>
+
+    <h3>Expected output</h3>
+    <table class="output-table">
+      <thead><tr><th>Field</th><th>Example Value</th><th>Description</th></tr></thead>
+      <tbody>
+        <tr><td>overall_ae</td><td>0.8591</td><td>Total deaths / total expected deaths</td></tr>
+        <tr><td>total_deaths</td><td>312</td><td>Observed deaths in study window</td></tr>
+        <tr><td>total_etr</td><td>18 450.3</td><td>Sum of central ETR across all age cells (years)</td></tr>
+        <tr><td>summary_df rows</td><td>56</td><td>One row per (age) cell</td></tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════════════════════════════════
+     DATA FORMAT
+══════════════════════════════════════════════════════════════════ -->
+<section id="data">
+  <div class="container">
+    <div class="section-label">Input Data</div>
+    <h1 class="section-title">Policy Data Format</h1>
+    <p class="section-desc">
+      lifexp reads standard CSV files. Below are the required and optional columns.
+    </p>
+
+    <h3>policies.csv</h3>
+    <table class="feat-table">
+      <thead><tr><th>Column</th><th>Type</th><th>Required</th><th>Description</th></tr></thead>
+      <tbody>
+        <tr><td><code>policy_id</code></td><td>string</td><td>&#10003;</td><td>Unique policy identifier</td></tr>
+        <tr><td><code>date_of_birth</code></td><td>YYYY-MM-DD</td><td>&#10003;</td><td>Insured&rsquo;s date of birth</td></tr>
+        <tr><td><code>issue_date</code></td><td>YYYY-MM-DD</td><td>&#10003;</td><td>Policy commencement date</td></tr>
+        <tr><td><code>status</code></td><td>IF / LAPSED / DEATH / SURRENDERED</td><td>&#10003;</td><td>Current policy status</td></tr>
+        <tr><td><code>exit_date</code></td><td>YYYY-MM-DD or blank</td><td>&#10003;</td><td>Date of exit; blank for in-force</td></tr>
+        <tr><td><code>exit_reason</code></td><td>string or blank</td><td>&#10003;</td><td>Cause of exit (DEATH, LAPSED, etc.)</td></tr>
+        <tr><td><code>gender</code></td><td>M / F</td><td>Optional</td><td>Used for segmentation</td></tr>
+        <tr><td><code>smoker_status</code></td><td>S / NS</td><td>Optional</td><td>Used for segmentation</td></tr>
+        <tr><td><code>product_code</code></td><td>string</td><td>Optional</td><td>ENDOW, TERM, WHOLELIFE, etc.</td></tr>
+        <tr><td><code>channel</code></td><td>string</td><td>Optional</td><td>AGENT, DIRECT, BANCASSURANCE</td></tr>
+        <tr><td><code>sum_assured</code></td><td>float</td><td>Optional</td><td>Policy sum assured</td></tr>
+        <tr><td><code>annual_premium</code></td><td>float</td><td>Optional</td><td>Annual premium</td></tr>
+      </tbody>
+    </table>
+
+    <h3>claims.csv &nbsp;<small style="font-weight:400;color:var(--muted)">(MorbidityStudy only)</small></h3>
+    <table class="feat-table">
+      <thead><tr><th>Column</th><th>Type</th><th>Description</th></tr></thead>
+      <tbody>
+        <tr><td><code>claim_id</code></td><td>string</td><td>Unique claim identifier</td></tr>
+        <tr><td><code>policy_id</code></td><td>string</td><td>Linked policy</td></tr>
+        <tr><td><code>claim_start_date</code></td><td>YYYY-MM-DD</td><td>Disability / sickness start</td></tr>
+        <tr><td><code>claim_end_date</code></td><td>YYYY-MM-DD</td><td>Recovery or study-end date</td></tr>
+        <tr><td><code>claim_status</code></td><td>string</td><td>OPEN, CLOSED_RECOVERY, CLOSED_DEATH</td></tr>
+        <tr><td><code>benefit_type</code></td><td>LUMP_SUM / PERIODIC</td><td>Benefit payment type</td></tr>
+        <tr><td><code>claim_amount</code></td><td>float</td><td>Total claim amount paid</td></tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════════════════════════════════
+     API REFERENCE
+══════════════════════════════════════════════════════════════════ -->
+<section id="api">
+  <div class="container">
+    <div class="section-label">API Reference</div>
+    <h1 class="section-title">Public API</h1>
+    <p class="section-desc">All classes below are importable directly from <code>lifexp</code>.</p>
+
+    <!-- PolicyDataset -->
+    <div class="api-block">
+      <div class="api-header">
+        <span class="api-name">PolicyDataset</span>
+        <span class="api-kind kind-class">class</span>
+      </div>
+      <div class="api-body">
+        <p class="api-desc">Container for a collection of policy records. Validates types and date fields on load.</p>
+        <div class="code-block">
+          <div class="code-header"><span class="dots"><span class="dot-red"></span><span class="dot-yellow"></span><span class="dot-green"></span></span><span class="lang">python</span></div>
+          <pre><code class="language-python">import pandas as pd
+from lifexp import PolicyDataset
+
+df = pd.read_csv("policies.csv")
+dataset = PolicyDataset.from_dataframe(df)
+
+print(len(dataset._records))        # number of policies loaded
+from lifexp.core.audit import checksum_dataset
+print(checksum_dataset(dataset))    # MD5 fingerprint of the data</code></pre>
+        </div>
+      </div>
+    </div>
+
+    <!-- StudyPeriod -->
+    <div class="api-block">
+      <div class="api-header">
+        <span class="api-name">StudyPeriod</span>
+        <span class="api-kind kind-class">class</span>
+      </div>
+      <div class="api-body">
+        <p class="api-desc">Defines the observation window for any study. Passed to every study class.</p>
+        <div class="code-block">
+          <div class="code-header"><span class="dots"><span class="dot-red"></span><span class="dot-yellow"></span><span class="dot-green"></span></span><span class="lang">python</span></div>
+          <pre><code class="language-python">from datetime import date
+from lifexp import StudyPeriod
+
+study = StudyPeriod(date(2018, 1, 1), date(2022, 12, 31))
+print(study.start_date)   # 2018-01-01
+print(study.end_date)     # 2022-12-31</code></pre>
+        </div>
+      </div>
+    </div>
+
+    <!-- MortalityStudy -->
+    <div class="api-block">
+      <div class="api-header">
+        <span class="api-name">MortalityStudy</span>
+        <span class="api-kind kind-class">class</span>
+      </div>
+      <div class="api-body">
+        <p class="api-desc">Orchestrates a full mortality experience study. Returns a <code>MortalityResults</code> object with all analytical outputs.</p>
+        <dl class="api-params">
+          <dt>dataset</dt><dd>PolicyDataset — the policy records to study.</dd>
+          <dt>study</dt><dd>StudyPeriod — observation window.</dd>
+          <dt>age_basis</dt><dd>AgeBasis.LAST_BIRTHDAY (default), NEXT_BIRTHDAY, or NEAREST_BIRTHDAY.</dd>
+          <dt>standard_table</dt><dd>str — name of the standard mortality table (e.g. <code>"A_1967_70"</code>).</dd>
+          <dt>group_by</dt><dd>List[str] — additional field names to segment results by (e.g. <code>["gender", "smoker_status"]</code>).</dd>
+        </dl>
+        <div class="code-block">
+          <div class="code-header"><span class="dots"><span class="dot-red"></span><span class="dot-yellow"></span><span class="dot-green"></span></span><span class="lang">python</span></div>
+          <pre><code class="language-python">from lifexp import MortalityStudy
+from lifexp.core.study_period import AgeBasis
+
+ms = MortalityStudy(
+    dataset,
+    study,
+    age_basis=AgeBasis.LAST_BIRTHDAY,
+    standard_table="A_1967_70",
+    group_by=["gender", "smoker_status"],
+)
+results = ms.run()
+
+# ── Core scalars ───────────────────────────────────────────────
+print(results.overall_ae)       # float:  total deaths / total expected
+print(results.total_deaths)     # float:  observed deaths
+print(results.total_etr)        # float:  central ETR in years
+
+# ── DataFrames ─────────────────────────────────────────────────
+results.summary_df              # one row per (group..., age) cell
+results.ae_by_age()             # collapsed to age only
+results.ae_by_policy_year()     # collapsed to policy year (duration)
+
+# ── Confidence intervals (Garwood exact Poisson) ───────────────
+ci = results.confidence_interval(level=0.95)
+# columns: age, deaths, ae_ratio, ae_ci_lower, ae_ci_upper, ci_width
+
+# ── Graduation ─────────────────────────────────────────────────
+grad = results.graduate(method="whittaker", lam=100.0)
+# columns: age, crude_central_rate, standard_rate, graduated_rate, ae_graduated
+
+# ── Formatted A/E table ────────────────────────────────────────
+ae_tbl = results.ae_table(standard="A_1967_70")
+# columns: age, deaths, central_etr, standard_rate, expected_deaths, ae</code></pre>
+        </div>
+
+        <div class="formula-box">
+          <div class="formula-title">A/E Ratio Formula</div>
+          $$ \text{A/E} = \frac{\sum_{x} d_x}{\sum_{x} \hat{q}_x \cdot E^c_x} $$
+          <p style="font-size:.82rem;color:var(--muted);margin-top:.75rem;margin-bottom:0">
+            where $d_x$ = observed deaths at age $x$, $\hat{q}_x$ = standard table probability, $E^c_x$ = central exposed-to-risk.
+          </p>
+        </div>
+
+        <div class="formula-box">
+          <div class="formula-title">Garwood 95% Confidence Interval</div>
+          $$ \text{CI lower} = \frac{\chi^2_{\alpha/2,\;2d}}{2E} \qquad \text{CI upper} = \frac{\chi^2_{1-\alpha/2,\;2(d+1)}}{2E} $$
+        </div>
+      </div>
+    </div>
+
+    <!-- LapseStudy -->
+    <div class="api-block">
+      <div class="api-header">
+        <span class="api-name">LapseStudy</span>
+        <span class="api-kind kind-class">class</span>
+      </div>
+      <div class="api-body">
+        <p class="api-desc">Computes lapse and surrender rates by policy year. Accepts the same <code>PolicyDataset</code> and <code>StudyPeriod</code> as <code>MortalityStudy</code>.</p>
+        <div class="code-block">
+          <div class="code-header"><span class="dots"><span class="dot-red"></span><span class="dot-yellow"></span><span class="dot-green"></span></span><span class="lang">python</span></div>
+          <pre><code class="language-python">from lifexp import LapseStudy
+
+ls = LapseStudy(dataset, study)
+lapse_results = ls.run()
+
+df = lapse_results.summary_df
+# Columns: policy_year, lapses, surrenders, policies_exposed, lapse_rate, surrender_rate
+
+# Overall lapse rate
+overall_rate = df["lapses"].sum() / df["policies_exposed"].sum()
+print(f"Overall lapse rate: {overall_rate:.4f}")
+
+# Year-1 lapse rate
+yr1 = df[df["policy_year"] == 1]["lapse_rate"].values[0]
+print(f"Year-1 lapse rate : {yr1:.4f}")</code></pre>
+        </div>
+      </div>
+    </div>
+
+    <!-- MorbidityStudy -->
+    <div class="api-block">
+      <div class="api-header">
+        <span class="api-name">MorbidityStudy</span>
+        <span class="api-kind kind-class">class</span>
+      </div>
+      <div class="api-body">
+        <p class="api-desc">Incidence and termination rate study for disability and health benefits. Uses the dual exposed-to-risk method with separate healthy and sick ETR.</p>
+        <div class="code-block">
+          <div class="code-header"><span class="dots"><span class="dot-red"></span><span class="dot-yellow"></span><span class="dot-green"></span></span><span class="lang">python</span></div>
+          <pre><code class="language-python">from lifexp import MorbidityStudy, ClaimDataset
+
+claims_df = pd.read_csv("claims.csv")
+claims = ClaimDataset.from_dataframe(claims_df)
+
+ms = MorbidityStudy(dataset, claims, study)
+morb = ms.run()
+
+morb.incidence_df       # incidence rates by age / policy year
+morb.termination_df     # termination rates (recovery + death)</code></pre>
+        </div>
+      </div>
+    </div>
+
+    <!-- TableRegistry -->
+    <div class="api-block">
+      <div class="api-header">
+        <span class="api-name">TableRegistry</span>
+        <span class="api-kind kind-class">class</span>
+      </div>
+      <div class="api-body">
+        <p class="api-desc">Registry for mortality tables. The A 1967-70 table is built in and auto-registered at import time. Custom tables can be loaded from CSV.</p>
+        <div class="code-block">
+          <div class="code-header"><span class="dots"><span class="dot-red"></span><span class="dot-yellow"></span><span class="dot-green"></span></span><span class="lang">python</span></div>
+          <pre><code class="language-python">from lifexp import TableRegistry
+
+reg = TableRegistry()
+
+# List all registered tables
+print(reg.list_tables())          # ['A_1967_70']
+
+# Look up a table
+a1967 = reg.get("A_1967_70")
+print(a1967.qx(40))               # 0.00179  (q_40 from A 1967-70)
+print(a1967.age_min, a1967.age_max)   # 17, 90
+
+# Register a custom table from CSV
+# CSV must have columns: age, qx
+custom = reg.load_from_csv("my_table.csv", name="MY_2024")
+reg.register(custom)
+
+# Now use it in any study
+ms = MortalityStudy(dataset, study, standard_table="MY_2024")</code></pre>
+        </div>
+      </div>
+    </div>
+
+    <!-- Reports -->
+    <div class="api-block">
+      <div class="api-header">
+        <span class="api-name">HTMLReport &nbsp;&amp;&nbsp; ExcelReport</span>
+        <span class="api-kind kind-class">class</span>
+      </div>
+      <div class="api-body">
+        <p class="api-desc">Professional report generators. HTMLReport produces self-contained files with embedded MathJax; ExcelReport uses openpyxl with conditional formatting.</p>
+        <div class="code-block">
+          <div class="code-header"><span class="dots"><span class="dot-red"></span><span class="dot-yellow"></span><span class="dot-green"></span></span><span class="lang">python</span></div>
+          <pre><code class="language-python">from lifexp import HTMLReport, ExcelReport
+
+# ── HTML report ────────────────────────────────────────────────
+rpt = HTMLReport(
+    title="Mortality Study 2018-2022",
+    study_metadata={
+        "Study Period": "2018-01-01 to 2022-12-31",
+        "Standard Table": "A 1967-70",
+        "Overall A/E": f"{results.overall_ae:.4f}",
+    },
+)
+rpt.add_summary_stats({"Total Deaths": results.total_deaths, ...})
+rpt.add_ae_table(results.ae_table(), caption="A/E by Age")
+rpt.add_graduation_table(crude_df, graduated_df)
+rpt.render("output/report.html")   # self-contained, no external deps
+
+# ── Excel report ───────────────────────────────────────────────
+xl = ExcelReport()
+xl.add_ae_sheet(results.summary_df,          sheet_name="AE by Age")
+xl.add_ae_sheet(results.confidence_interval(), sheet_name="CI (95%)")
+xl.add_ae_sheet(results.graduate(),           sheet_name="Graduation")
+xl.add_summary_sheet({"Overall A/E": results.overall_ae}, sheet_name="Summary")
+xl.render("output/report.xlsx")
+# Red fill where ae > 1.2 | Green fill where ae < 0.8</code></pre>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════════════════════════════════
+     CHARTS
+══════════════════════════════════════════════════════════════════ -->
+<section id="charts">
+  <div class="container">
+    <div class="section-label">Visualisation</div>
+    <h1 class="section-title">Charts</h1>
+    <p class="section-desc">All chart functions return a <code>matplotlib.figure.Figure</code> and optionally save to PNG/PDF/SVG.</p>
+
+    <div class="code-block">
+      <div class="code-header"><span class="dots"><span class="dot-red"></span><span class="dot-yellow"></span><span class="dot-green"></span></span><span class="lang">python</span></div>
+      <pre><code class="language-python">from lifexp.reporting.charts import (
+    plot_ae_by_age,
+    plot_crude_vs_graduated,
+    plot_ae_heatmap,
+    plot_survival_curve,
+    plot_lapse_funnel,
+)
+
+# 1. A/E bar chart by age  (red bars > 1.0,  green bars < 1.0)
+fig1 = plot_ae_by_age(
+    results.ae_by_age(),
+    title="A/E Ratio by Age - A 1967-70",
+    output_path="charts/ae_by_age.png",
+    ci_column="ci_half_width",      # optional CI whiskers
+)
+
+# 2. Crude vs graduated mortality rates
+grad_df = results.graduate()
+fig2 = plot_crude_vs_graduated(
+    ages=grad_df["age"].tolist(),
+    crude=grad_df["crude_central_rate"].tolist(),
+    graduated=grad_df["graduated_rate"].tolist(),
+    log_scale=True,
+    output_path="charts/graduation.png",
+)
+
+# 3. A/E heatmap  (color center locked at 1.0 — not data mean)
+pivot = results.summary_df.pivot(index="gender", columns="age", values="ae_ratio")
+fig3 = plot_ae_heatmap(pivot, title="A/E Heatmap by Gender x Age")
+
+# 4. Survival curve  S(x) derived from graduated rates
+import numpy as np, pandas as pd
+qx = grad_df["graduated_rate"].fillna(0).values
+lx = np.cumprod(np.concatenate([[1.0], 1 - qx[:-1]]))
+surv_df = pd.DataFrame({"time": grad_df["age"], "survival": lx})
+fig4 = plot_survival_curve(surv_df, title="Survival Curve S(x)")
+
+# 5. In-force funnel by policy year
+funnel_df = pd.DataFrame({"policy_year": range(1,11), "if_count": [50000,42000,...]})
+fig5 = plot_lapse_funnel(funnel_df, title="In-Force Funnel")</code></pre>
+    </div>
+
+    <div class="alert alert-tip">
+      <span class="alert-icon">&#9888;</span>
+      <div>The heatmap color scale is always centered at <strong>1.0</strong> (not the data mean) using symmetric <code>vmin = 1 - max_dev</code> and <code>vmax = 1 + max_dev</code>. This ensures red/green divergence is always relative to the standard table, not the portfolio average.</div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════════════════════════════════
+     CLI
+══════════════════════════════════════════════════════════════════ -->
+<section id="cli">
+  <div class="container">
+    <div class="section-label">Command Line</div>
+    <h1 class="section-title">CLI Reference</h1>
+    <p class="section-desc">The <code>lifexp</code> CLI is installed as a script entry point when you <code>pip install lifexp</code>.</p>
+
+    <h3>Mortality study</h3>
+    <div class="code-block">
+      <div class="code-header"><span class="dots"><span class="dot-red"></span><span class="dot-yellow"></span><span class="dot-green"></span></span><span class="lang">bash</span></div>
+      <pre><code class="language-bash">lifexp mortality \
+  --data        policies.csv \
+  --study-start 2018-01-01 \
+  --study-end   2022-12-31 \
+  --table       A_1967_70 \
+  --output      results/ \
+  --format      html,excel</code></pre>
+    </div>
+
+    <h3>Lapse study</h3>
+    <div class="code-block">
+      <div class="code-header"><span class="dots"><span class="dot-red"></span><span class="dot-yellow"></span><span class="dot-green"></span></span><span class="lang">bash</span></div>
+      <pre><code class="language-bash">lifexp lapse \
+  --data        policies.csv \
+  --study-start 2018-01-01 \
+  --study-end   2022-12-31 \
+  --output      results/</code></pre>
+    </div>
+
+    <h3>Table management</h3>
+    <div class="code-block">
+      <div class="code-header"><span class="dots"><span class="dot-red"></span><span class="dot-yellow"></span><span class="dot-green"></span></span><span class="lang">bash</span></div>
+      <pre><code class="language-bash"># List all registered tables
+lifexp tables --list
+
+# Register a custom table
+lifexp tables --register my_table.csv --name MY_TABLE_2024</code></pre>
+    </div>
+
+    <h3>Using a YAML config file</h3>
+    <p>All CLI flags can be placed in a YAML file. Explicit CLI flags always override config values.</p>
+    <div class="code-block">
+      <div class="code-header"><span class="dots"><span class="dot-red"></span><span class="dot-yellow"></span><span class="dot-green"></span></span><span class="lang">yaml</span></div>
+      <pre><code class="language-yaml"># study_config.yaml
+data: data/policies_2022.csv
+study_start: "2018-01-01"
+study_end:   "2022-12-31"
+table: A_1967_70
+output: results/
+fmt: html,excel</code></pre>
+    </div>
+    <div class="code-block">
+      <div class="code-header"><span class="dots"><span class="dot-red"></span><span class="dot-yellow"></span><span class="dot-green"></span></span><span class="lang">bash</span></div>
+      <pre><code class="language-bash">lifexp mortality --config study_config.yaml</code></pre>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════════════════════════════════
+     EXAMPLES
+══════════════════════════════════════════════════════════════════ -->
+<section id="examples">
+  <div class="container">
+    <div class="section-label">Worked Examples</div>
+    <h1 class="section-title">Step-by-Step Examples</h1>
+
+    <!-- Example 1 -->
+    <h2>Example 1 &mdash; Segmented Mortality Study</h2>
+    <p>Break down mortality experience by gender and smoker status simultaneously.</p>
+    <div class="code-block">
+      <div class="code-header"><span class="dots"><span class="dot-red"></span><span class="dot-yellow"></span><span class="dot-green"></span></span><span class="lang">python</span></div>
+      <pre><code class="language-python">from lifexp import PolicyDataset, StudyPeriod, MortalityStudy
+import pandas as pd
+from datetime import date
+
+dataset = PolicyDataset.from_dataframe(pd.read_csv("policies.csv"))
+study   = StudyPeriod(date(2018, 1, 1), date(2022, 12, 31))
+
+ms = MortalityStudy(
+    dataset, study,
+    standard_table="A_1967_70",
+    group_by=["gender", "smoker_status"],
+)
+results = ms.run()
+
+# Aggregate A/E by segment
+segment_summary = (
+    results.summary_df
+    .groupby(["gender", "smoker_status"])
+    .agg(deaths=("deaths", "sum"), expected=("expected_deaths", "sum"))
+    .assign(ae=lambda d: d["deaths"] / d["expected"])
+)
+print(segment_summary)</code></pre>
+    </div>
+
+    <!-- Example 2 -->
+    <h2>Example 2 &mdash; Graduation and Diagnostics</h2>
+    <p>Smooth crude rates using Whittaker-Henderson and test fit quality.</p>
+    <div class="code-block">
+      <div class="code-header"><span class="dots"><span class="dot-red"></span><span class="dot-yellow"></span><span class="dot-green"></span></span><span class="lang">python</span></div>
+      <pre><code class="language-python">from lifexp.graduation.whittaker import whittaker_1d
+from lifexp.graduation.diagnostics import chi_squared_test
+import pandas as pd
+
+results = ms.run()
+ae_age  = results.ae_by_age()
+
+crude   = pd.Series(ae_age["crude_central_rate"].fillna(0).values,
+                    index=ae_age["age"].values)
+weights = pd.Series(ae_age["central_etr"].values,
+                    index=ae_age["age"].values)
+
+# Whittaker-Henderson with smoothing parameter lambda = 100
+graduated = whittaker_1d(crude, weights, lam=100.0)
+
+# Chi-squared goodness-of-fit test
+chi2_result = chi_squared_test(crude, graduated, weights)
+print(f"Chi-squared : {chi2_result.statistic:.2f}")
+print(f"p-value     : {chi2_result.p_value:.4f}")
+print(f"Degrees of freedom: {chi2_result.df}")</code></pre>
+    </div>
+
+    <!-- Example 3 -->
+    <h2>Example 3 &mdash; Audit Trail &amp; Run Comparison</h2>
+    <p>Record every study run with a data fingerprint and detect when parameters change.</p>
+    <div class="code-block">
+      <div class="code-header"><span class="dots"><span class="dot-red"></span><span class="dot-yellow"></span><span class="dot-green"></span></span><span class="lang">python</span></div>
+      <pre><code class="language-python">import uuid
+from datetime import datetime
+from lifexp.core.audit import checksum_dataset, StudyRun, compare_runs
+import lifexp, sys
+
+checksum = checksum_dataset(dataset)   # MD5, order-independent
+
+run_a = StudyRun(
+    run_id=str(uuid.uuid4()),
+    timestamp=datetime.utcnow(),
+    lifexp_version=lifexp.__version__,
+    python_version=sys.version,
+    study_type="mortality",
+    parameters={"study_start": "2018-01-01", "table": "A_1967_70"},
+    data_checksum=checksum,
+)
+run_a.to_json("output/audit_run_a.json")   # persist to disk
+
+# Later — re-run with different parameters
+run_b = StudyRun(
+    run_id=str(uuid.uuid4()),
+    timestamp=datetime.utcnow(),
+    lifexp_version=lifexp.__version__,
+    python_version=sys.version,
+    study_type="mortality",
+    parameters={"study_start": "2020-01-01", "table": "A_1967_70"},  # changed
+    data_checksum=checksum,
+)
+
+diff = compare_runs(run_a, run_b)
+print(diff["same_data"])          # True  (same dataset)
+print(diff["parameter_diffs"])
+# {'study_start': {'from': '2018-01-01', 'to': '2020-01-01'}}</code></pre>
+    </div>
+
+    <!-- Example 4 -->
+    <h2>Example 4 &mdash; Custom Mortality Table</h2>
+    <p>Load your own CSV table and compare experience against it.</p>
+    <div class="code-block">
+      <div class="code-header"><span class="dots"><span class="dot-red"></span><span class="dot-yellow"></span><span class="dot-green"></span></span><span class="lang">python</span></div>
+      <pre><code class="language-python">from lifexp import TableRegistry, MortalityStudy
+
+# Prepare a CSV with columns: age, qx
+# age,qx
+# 17,0.00095
+# 18,0.00098
+# ...
+
+reg = TableRegistry()
+table = reg.load_from_csv("sl_annuitant_2020.csv", name="SL_ANNUITANT_2020")
+reg.register(table)
+print(f"Loaded: age {table.age_min} - {table.age_max}")
+
+ms = MortalityStudy(dataset, study, standard_table="SL_ANNUITANT_2020")
+results = ms.run()
+print(f"A/E vs SL Annuitant 2020: {results.overall_ae:.4f}")</code></pre>
+    </div>
+
+    <!-- Example 5 -->
+    <h2>Example 5 &mdash; Commission Anomaly Detection</h2>
+    <p>Flag unusual commission payments using ensemble voting across three statistical methods.</p>
+    <div class="code-block">
+      <div class="code-header"><span class="dots"><span class="dot-red"></span><span class="dot-yellow"></span><span class="dot-green"></span></span><span class="lang">python</span></div>
+      <pre><code class="language-python">from lifexp.expense.commission import CommissionStudy
+import pandas as pd
+
+commission_df = pd.read_csv("commissions.csv")
+# Required columns: agent_id, commission_amount, commission_date
+
+schedule = {"first_year": 0.30, "renewal": 0.05}
+from lifexp import StudyPeriod
+from datetime import date
+
+cs = CommissionStudy(commission_df, schedule, StudyPeriod(date(2022,1,1), date(2022,12,31)))
+cr = cs.run()
+
+# flag_anomalies: ensemble requires >= 2 of (zscore, MAD, IQR) to flag
+flagged = cr.flag_anomalies(
+    method="ensemble",
+    zscore_threshold=3.0,
+    mad_threshold=3.5,
+    iqr_multiplier=1.5,
+)
+print(f"Flagged agents : {len(flagged)}")
+print(flagged[["agent_id", "commission_amount", "ensemble_votes"]])</code></pre>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════════════════════════════════
+     TESTING
+══════════════════════════════════════════════════════════════════ -->
+<section id="testing">
+  <div class="container">
+    <div class="section-label">Quality Assurance</div>
+    <h1 class="section-title">Test Suite</h1>
+    <p class="section-desc">lifexp ships with 439 tests covering unit, integration, and end-to-end scenarios.</p>
+
+    <div class="code-block">
+      <div class="code-header"><span class="dots"><span class="dot-red"></span><span class="dot-yellow"></span><span class="dot-green"></span></span><span class="lang">bash</span></div>
+      <pre><code class="language-bash"># Full suite
+pytest tests/ -v
+
+# E2E only (synthetic 100k-policy Sri Lankan portfolio)
+pytest tests/test_e2e.py -v
+
+# Specific module
+pytest tests/mortality/ -v
+pytest tests/graduation/ -v</code></pre>
+    </div>
+
+    <table class="feat-table" style="margin-top:1.5rem">
+      <thead><tr><th>Test module</th><th>Tests</th><th>What is verified</th></tr></thead>
+      <tbody>
+        <tr><td><code>tests/core/</code></td><td>~80</td><td>Data model, exposure, date utils, tables, credibility, audit</td></tr>
+        <tr><td><code>tests/mortality/</code></td><td>~40</td><td>ETR calculation, A/E ratios, graduation, projection</td></tr>
+        <tr><td><code>tests/lapse/</code></td><td>~25</td><td>Lapse/surrender rates by policy year</td></tr>
+        <tr><td><code>tests/morbidity/</code></td><td>~40</td><td>Dual ETR, multi-state model, incidence and termination</td></tr>
+        <tr><td><code>tests/reinsurance/</code></td><td>~25</td><td>Ceded/retained split, RI-adjusted A/E</td></tr>
+        <tr><td><code>tests/graduation/</code></td><td>~35</td><td>Whittaker 1D &amp; 2D, splines, diagnostics</td></tr>
+        <tr><td><code>tests/expense/</code></td><td>~30</td><td>Unit costs, inflation, commission anomaly detection</td></tr>
+        <tr><td><code>tests/reporting/</code></td><td>~70</td><td>HTML structure, Excel sheets, chart figure types</td></tr>
+        <tr><td><code>tests/test_cli.py</code></td><td>~39</td><td>CLI commands, YAML config, public API imports</td></tr>
+        <tr><td><code>tests/test_e2e.py</code></td><td>54</td><td>Full pipeline on 5,000-policy synthetic Sri Lankan portfolio</td></tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════════════════════════════════
+     AUTHOR
+══════════════════════════════════════════════════════════════════ -->
+<section id="author" style="background:#fff">
+  <div class="container">
+    <div class="section-label">About the Author</div>
+    <p class="section-desc" style="margin-bottom:2.5rem">
+      lifexp was designed and built from scratch to address the lack of open-source actuarial
+      experience-study tooling for the life insurance market.
+    </p>
+
+    <div class="author-card">
+      <div class="author-avatar">DW</div>
+      <div class="author-info">
+        <h3>W M Dhanushka S B Wijekoon</h3>
+        <div class="role">Actuarial Analyst &mdash; Model Development &nbsp;|&nbsp;</div>
+        <div class="author-links">
+          <a class="author-link" href="mailto:dhanushkasisil@outlook.com">
+            &#9993; dhanushkasisil@outlook.com
+          </a>
+          <a class="author-link" href="https://lk.linkedin.com/in/dhanushkasisil" target="_blank">
+            &#128279; LinkedIn
+          </a>
+          <a class="author-link" href="https://github.com/dhanushkasisil/lifexp" target="_blank">
+            &#9641; GitHub
+          </a>
+        </div>
+      </div>
+    </div>
+
+    <div class="alert alert-warn" style="margin-top:2rem">
+      <span class="alert-icon">&#8505;</span>
+      <div>lifexp is an independent open-source project and is not an official product.</div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════════════════════════════════
+     FOOTER
+══════════════════════════════════════════════════════════════════ -->
+<footer>
+  <p>
+    <strong style="color:#fff">lifexp</strong> &mdash; Actuarial Life Experience Analysis Toolkit
+    &nbsp;&bull;&nbsp; MIT License &nbsp;&bull;&nbsp; Python 3.9+
+  </p>
+  <p style="margin-top:.5rem">
+    <a href="https://pypi.org/project/lifexp/" target="_blank">PyPI</a> &nbsp;&bull;&nbsp;
+    <a href="https://github.com/dhanushkasisil/lifexp" target="_blank">GitHub</a> &nbsp;&bull;&nbsp;
+    <a href="mailto:dhanushkasisil@outlook.com">Contact</a>
+  </p>
+  <p style="margin-top:1rem;font-size:.8rem;color:#475569">
+    &copy; 2025 W M Dhanushka S B Wijekoon. Built with Python.
+  </p>
+</footer>
+
+<!-- Highlight.js init -->
+<script>
+  document.addEventListener("DOMContentLoaded", () => {
+    hljs.highlightAll();
+
+    // Tab switching
+    document.querySelectorAll(".tab-btn").forEach(btn => {
+      btn.addEventListener("click", () => {
+        const group = btn.closest(".tab-group");
+        group.querySelectorAll(".tab-btn").forEach(b => b.classList.remove("active"));
+        group.querySelectorAll(".tab-content").forEach(c => c.classList.remove("active"));
+        btn.classList.add("active");
+        document.getElementById(btn.dataset.tab).classList.add("active");
+      });
+    });
+
+    // Smooth active nav highlighting on scroll
+    const sections = document.querySelectorAll("section[id], div[id='install']");
+    const navLinks = document.querySelectorAll(".nav-links a");
+    const observer = new IntersectionObserver(entries => {
+      entries.forEach(e => {
+        if (e.isIntersecting) {
+          navLinks.forEach(a => a.style.color = "");
+          const active = document.querySelector(`.nav-links a[href="#${e.target.id}"]`);
+          if (active) active.style.color = "#fff";
+        }
+      });
+    }, { rootMargin: "-40% 0px -55% 0px" });
+    sections.forEach(s => observer.observe(s));
+  });
+</script>
+
+</body>
+</html>
